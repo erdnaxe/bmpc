@@ -10,7 +10,7 @@ const favicon = new Favicon()
 
 // Pagination
 let queuePage = 0
-const songsPerPage = 512
+const songsPerPage = 100
 
 // Notification system
 function notify (text) {
@@ -194,11 +194,13 @@ document.getElementById('btn-update-database').addEventListener('click', (e) => 
   e.preventDefault()
 })
 document.getElementById('previous-page').addEventListener('click', (e) => {
+  history.pushState({ queuePage }, '')
   queuePage--
   refreshQueue()
   e.preventDefault()
 })
 document.getElementById('next-page').addEventListener('click', (e) => {
+  history.pushState({ queuePage }, '')
   queuePage++
   refreshQueue()
   e.preventDefault()
@@ -219,6 +221,7 @@ mpdClient.onClose = () => {
   setTimeout(() => mpdClient.connect(), 3000)
 }
 
+// Configure media session actions
 if ('mediaSession' in navigator) {
   // Play blank audio to take audio focus and allow media control
   const audio = new Audio('/blank.ogg')
@@ -230,6 +233,15 @@ if ('mediaSession' in navigator) {
   navigator.mediaSession.setActionHandler('stop', () => mpdClient.stop())
   navigator.mediaSession.setActionHandler('previoustrack', () => mpdClient.previous())
   navigator.mediaSession.setActionHandler('nexttrack', () => mpdClient.next())
+}
+
+// Configure history
+window.onpopstate = (event) => {
+  // Queue page history
+  if (event.state.queuePage !== queuePage) {
+    queuePage = event.state.queuePage
+    refreshQueue()
+  }
 }
 
 mpdClient.connect().then(() => {
