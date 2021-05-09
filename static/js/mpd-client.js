@@ -15,13 +15,13 @@ export default class MpdClient {
    */
   connect () {
     return new Promise((resolve, reject) => {
-      const protocol = `ws${location.protocol === 'https:' ? 's' : ''}:`
+      const protocol = `ws${location.protocol === "https:" ? "s" : ""}:`
       this.socket = new WebSocket(`${protocol}//${location.host}/ws`)
       this.socket.onopen = () => {
         // Wait for OK from server
         this.socket.onmessage = (msg) => {
-          if (!msg.data.startsWith('OK MPD ')) {
-            reject(new Error('Bad return code from server'))
+          if (!msg.data.startsWith("OK MPD ")) {
+            reject(new Error("Bad return code from server"))
             return
           }
 
@@ -53,18 +53,17 @@ export default class MpdClient {
 
     return new Promise((resolve, reject) => {
       if (!this.socket) {
-        reject(new Error('Not connected to server'))
+        reject(new Error("Not connected to server"))
         return
       }
 
       // Set temporary callback to catch response
-      let response = ''
+      let response = ""
       this.socket.onmessage = (msg) => {
         response += msg.data
 
-        if (msg.data.endsWith('OK\n')) {
-          // Release lock
-          this.lock = false
+        if (msg.data.endsWith("OK\n")) {
+          this.lock = false // Release lock
 
           // Parse response
           const data = []
@@ -76,9 +75,8 @@ export default class MpdClient {
           return
         }
 
-        if (msg.data.startsWith('ACK ')) {
-          // Release lock
-          this.lock = false
+        if (msg.data.startsWith("ACK ")) {
+          this.lock = false // Release lock
 
           // Parse error
           const pattern = /^ACK\s+\[.*\]\s+(\{.*)/
@@ -95,7 +93,7 @@ export default class MpdClient {
    * Reports the current status of the player and the volume level.
    */
   async currentSong () {
-    const data = await this.send('currentsong\n')
+    const data = await this.send("currentsong\n")
 
     // Parse status
     const status = {}
@@ -113,7 +111,7 @@ export default class MpdClient {
    * Reports the current status of the player and the volume level.
    */
   async status () {
-    const data = await this.send('status\n')
+    const data = await this.send("status\n")
 
     // Parse status
     const status = {}
@@ -179,7 +177,7 @@ export default class MpdClient {
    * Plays next song in the playlist.
    */
   next () {
-    return this.send('next\n')
+    return this.send("next\n")
   }
 
   /**
@@ -189,10 +187,9 @@ export default class MpdClient {
    */
   pause (state) {
     if (state === null) {
-      return this.send('pause\n')
-    } else {
-      return this.send(`pause ${state ? 1 : 0}\n`)
+      return this.send("pause\n")
     }
+    return this.send(`pause ${state ? 1 : 0}\n`)
   }
 
   /**
@@ -207,7 +204,7 @@ export default class MpdClient {
    * Plays previous song in the playlist.
    */
   previous () {
-    return this.send('previous\n')
+    return this.send("previous\n")
   }
 
   /**
@@ -222,14 +219,14 @@ export default class MpdClient {
    * Stops playing.
    */
   stop () {
-    return this.send('stop\n')
+    return this.send("stop\n")
   }
 
   /**
    * Clears the queue.
    */
   clear () {
-    return this.send('clear\n')
+    return this.send("clear\n")
   }
 
   /**
@@ -264,18 +261,18 @@ export default class MpdClient {
    * @param {Number} end End of range (not included).
    */
   async playlistInfo (start, end) {
-    let data
+    let data = null
     if (start !== null && end !== null) {
       data = await this.send(`playlistinfo ${start}:${end}\n`)
     } else {
-      data = await this.send('playlistinfo\n')
+      data = await this.send("playlistinfo\n")
     }
 
     // Parse playlist
     const playlist = []
     for (const entry of data) {
       // A new song always start with `file` entry
-      if (entry[0] === 'file') {
+      if (entry[0] === "file") {
         // New file section
         playlist.push({})
       }
@@ -292,6 +289,6 @@ export default class MpdClient {
    * modified files.
    */
   update () {
-    return this.send('update\n')
+    return this.send("update\n")
   }
 }

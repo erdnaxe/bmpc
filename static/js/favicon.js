@@ -3,13 +3,13 @@
  */
 export default class Favicon {
   constructor () {
-    this.canvas = document.createElement('canvas')
+    this.canvas = document.createElement("canvas")
     this.canvas.height = 64
     this.canvas.width = 64
-    this.ctx = this.canvas.getContext('2d')
-    this.ctx.font = '40px serif'
+    this.ctx = this.canvas.getContext("2d")
+    this.ctx.font = "40px serif"
     this.lastIcon = null
-    this.updateIcon('')
+    this.updateIcon("")
   }
 
   /**
@@ -18,13 +18,13 @@ export default class Favicon {
    */
   updateIcon (newIcon) {
     if (newIcon === this.lastIcon) {
-      return // icon is already set
+      return // Icon is already set
     }
     this.lastIcon = newIcon
 
     // Replace icon
     this.ctx.clearRect(0, 0, 64, 64)
-    this.ctx.fillText('🎶', 0, 42)
+    this.ctx.fillText("🎶", 0, 42)
     this.ctx.fillText(newIcon, 24, 60)
     document.querySelector("link[rel='icon']").href = this.canvas.toDataURL()
   }
