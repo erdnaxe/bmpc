@@ -238,7 +238,7 @@ if ('mediaSession' in navigator) {
 // Configure history
 window.onpopstate = (event) => {
   // Queue page history
-  if (event.state.queuePage !== queuePage) {
+  if (event.state.queuePage && event.state.queuePage !== queuePage) {
     queuePage = event.state.queuePage
     refreshQueue()
   }

@@ -22,6 +22,7 @@ export default class MpdClient {
         this.socket.onmessage = (msg) => {
           if (!msg.data.startsWith('OK MPD ')) {
             reject(new Error('Bad return code from server'))
+            return
           }
 
           // Register onclose callback
@@ -53,6 +54,7 @@ export default class MpdClient {
     return new Promise((resolve, reject) => {
       if (!this.socket) {
         reject(new Error('Not connected to server'))
+        return
       }
 
       // Set temporary callback to catch response
@@ -71,6 +73,7 @@ export default class MpdClient {
             data.push([match[1], match[2]])
           }
           resolve(data)
+          return
         }
 
         if (msg.data.startsWith('ACK ')) {
