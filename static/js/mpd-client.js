@@ -5,9 +5,6 @@ export default class MpdClient {
   constructor () {
     this.socket = null
     this.onClose = null
-
-    // Lock during request
-    this.lock = false
   }
 
   /**
@@ -28,6 +25,7 @@ export default class MpdClient {
           // Register onclose callback
           this.socket.onclose = this.onClose
 
+          this.socket.onmessage = null
           resolve()
         }
       }
@@ -40,21 +38,13 @@ export default class MpdClient {
    * @param {String} request Request to send to MPD.
    */
   async send (request) {
-    // Wait and acquire lock
-    await new Promise(resolve => {
-      const inter = setInterval(() => {
-        if (!this.lock) {
-          clearInterval(inter)
-          resolve()
-        }
-      }, 50)
-    })
-    this.lock = true
-
     return new Promise((resolve, reject) => {
       if (!this.socket) {
         reject(new Error("Not connected to server"))
         return
+      }
+      if (this.socket.onmessage) {
+        return // Request already running
       }
 
       // Set temporary callback to catch response
@@ -63,7 +53,7 @@ export default class MpdClient {
         response += msg.data
 
         if (msg.data.endsWith("OK\n")) {
-          this.lock = false // Release lock
+          this.socket.onmessage = null  // End of request
 
           // Parse response
           const data = []
@@ -76,7 +66,7 @@ export default class MpdClient {
         }
 
         if (msg.data.startsWith("ACK ")) {
-          this.lock = false // Release lock
+          this.socket.onmessage = null  // End of request
 
           // Parse error
           const pattern = /^ACK\s+\[.*\]\s+(\{.*)/
