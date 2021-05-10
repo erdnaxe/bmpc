@@ -112,8 +112,8 @@ async function refreshQueue () {
   }
 
   // Show pagination
-  document.getElementById("previous-page").classList.toggle("hide", queuePage <= 0)
-  document.getElementById("next-page").classList.toggle("hide", data.length < songsPerPage)
+  document.getElementById("btn-previous-page").classList.toggle("hide", queuePage <= 0)
+  document.getElementById("btn-next-page").classList.toggle("hide", data.length < songsPerPage)
 
   // Make queue table sortable
   sortable(newTableBody)[0].addEventListener("sortupdate", (e) => {
@@ -192,13 +192,13 @@ document.getElementById("btn-update-database").addEventListener("click", (e) => 
   }).catch((e) => notify(e.message))
   e.preventDefault()
 })
-document.getElementById("previous-page").addEventListener("click", (e) => {
+document.getElementById("btn-previous-page").addEventListener("click", (e) => {
   history.pushState({ queuePage }, "")
   queuePage--
   refreshQueue()
   e.preventDefault()
 })
-document.getElementById("next-page").addEventListener("click", (e) => {
+document.getElementById("btn-next-page").addEventListener("click", (e) => {
   history.pushState({ queuePage }, "")
   queuePage++
   refreshQueue()

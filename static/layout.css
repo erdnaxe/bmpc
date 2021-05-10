@@ -61,12 +61,6 @@ tr.active {
   font-weight: bold;
 }
 
-/* Pagination */
-.pager {
-  text-align: center;
-  padding: 1em;
-}
-
 /* Link */
 a {
   color: #ffffff;
