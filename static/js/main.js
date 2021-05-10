@@ -67,9 +67,16 @@ async function refreshStatus () {
   document.getElementById("btn-toggle-single").classList.toggle("active", data.single)
   document.getElementById("btn-toggle-crossfade").classList.toggle("active", data.xfade > 0)
 
-  // Update playlist
-  document.querySelectorAll("#playlist > tbody > tr").forEach(el => {
-    el.classList.toggle("active", parseInt(el.dataset.trackId) === data.song)
+  // Style active song in bold in playlist
+  const oldActive = document.getElementById("playlist").dataset.activeSong
+  document.getElementById("playlist").dataset.activeSong = data.song
+  if (oldActive) {
+    document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${oldActive}"]`).forEach(el => {
+      el.classList.remove("active")
+    })
+  }
+  document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${data.song}"]`).forEach(el => {
+    el.classList.add("active")
   })
 
   // Update media session
@@ -89,6 +96,7 @@ async function refreshQueue () {
   oldTableBody.parentNode.replaceChild(newTableBody, oldTableBody)
 
   // Fill table with playlist
+  const activeSong = document.getElementById("playlist").dataset.activeSong
   for (const song of data) {
     const time = new Date(song.Time * 1000).toISOString().substr(14, 5)
     const row = document.createElement("tr")
@@ -100,6 +108,10 @@ async function refreshQueue () {
     removeTd.innerHTML = "✕"
     row.appendChild(removeTd)
     newTableBody.appendChild(row)
+    if (song.Pos === activeSong) {
+      // Style current song
+      row.classList.add("active")
+    }
 
     // Remove track on remove button click
     removeTd.addEventListener("click", () => {
@@ -108,7 +120,9 @@ async function refreshQueue () {
     })
 
     // On click, jump to track
-    row.addEventListener("click", () => { mpdClient.play(song.Pos) })
+    row.addEventListener("click", () => {
+      mpdClient.play(song.Pos).then(refreshStatus).then(refreshCurrentSong)
+    })
   }
 
   // Show pagination
