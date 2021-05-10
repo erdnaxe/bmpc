@@ -239,6 +239,12 @@ document.addEventListener("keydown", (e) => {
       mpdClient.pause().then(refreshStatus).catch((e) => notify(e.message))
       e.preventDefault()
       break
+    case "f":
+      if (e.ctrlKey) {
+        document.getElementById("filter-queue").focus()
+        e.preventDefault()
+      }
+      break
     }
   }
 })
