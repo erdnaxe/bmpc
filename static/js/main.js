@@ -86,9 +86,20 @@ async function refreshStatus () {
 }
 
 async function refreshQueue () {
-  const start = queuePage * songsPerPage
-  const end = (queuePage + 1) * songsPerPage
-  const data = await mpdClient.playlistInfo(start, end)
+  const filter = document.getElementById("filter-queue").value
+  let data = []
+  if (filter.length > 2) {
+    // Get filtered queue
+    data = await mpdClient.playlistSearch(`(any contains '${filter}')`)
+
+    // Crop to `songsPerPage` elements
+    data = data.slice(0, songsPerPage)
+  } else {
+    // Get non filtered queue
+    const start = queuePage * songsPerPage
+    const end = (queuePage + 1) * songsPerPage
+    data = await mpdClient.playlistInfo(start, end)
+  }
 
   // Create new table body
   const oldTableBody = document.querySelector("#playlist > tbody")
@@ -205,6 +216,9 @@ document.getElementById("btn-update-database").addEventListener("click", (e) => 
     notify("Updating MPD database")
   }).catch((e) => notify(e.message))
   e.preventDefault()
+})
+document.getElementById("filter-queue").addEventListener("input", e => {
+  refreshQueue()
 })
 document.getElementById("btn-previous-page").addEventListener("click", (e) => {
   history.pushState({ queuePage }, "")

@@ -80,6 +80,26 @@ export default class MpdClient {
   }
 
   /**
+   * Parse the raw list and format a list of songs.
+   * @param {Array} dataList List returned by send promise.
+   */
+  songListParser (dataList) {
+    const songList = []
+    for (const entry of dataList) {
+      // A new song always start with `file` entry
+      if (entry[0] === "file") {
+        // New file section
+        songList.push({})
+      }
+
+      if (songList.length > 0) {
+        songList[songList.length - 1][entry[0]] = entry[1]
+      }
+    }
+    return songList
+  }
+
+  /**
    * Reports the current status of the player and the volume level.
    */
   async currentSong () {
@@ -268,19 +288,17 @@ export default class MpdClient {
     }
 
     // Parse playlist
-    const playlist = []
-    for (const entry of data) {
-      // A new song always start with `file` entry
-      if (entry[0] === "file") {
-        // New file section
-        playlist.push({})
-      }
+    return this.songListParser(data)
+  }
 
-      if (playlist.length > 0) {
-        playlist[playlist.length - 1][entry[0]] = entry[1]
-      }
-    }
-    return playlist
+  /**
+   * Searches case-insensitively for partial matches in the queue.
+   * @param {String} filter Filter for searching, see
+   * <https://www.musicpd.org/doc/html/protocol.html#filters>.
+   */
+  async playlistSearch (filter) {
+    const data = await this.send(`playlistsearch "${filter}"\n`)
+    return this.songListParser(data)
   }
 
   /**

@@ -30,6 +30,15 @@ input[type="range"] {
   width: 100%;
 }
 
+/* Search */
+input[type="search"] {
+  background: inherit;
+  color: inherit;
+  border: 1px dotted #fff;
+  padding: 0.2em;
+  width: 10em;
+}
+
 /* Table format */
 table {
   width: 100%;
