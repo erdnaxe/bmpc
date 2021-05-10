@@ -90,7 +90,7 @@ async function refreshQueue () {
   let data = []
   if (filter.length > 2) {
     // Get filtered queue
-    data = await mpdClient.playlistSearch(`(any contains '${filter}')`)
+    data = await mpdClient.playlistSearch(`(any contains '${filter}')`).catch(e => notify(e.message))
 
     // Crop to `songsPerPage` elements
     data = data.slice(0, songsPerPage)
@@ -217,7 +217,7 @@ document.getElementById("btn-update-database").addEventListener("click", (e) => 
   }).catch((e) => notify(e.message))
   e.preventDefault()
 })
-document.getElementById("filter-queue").addEventListener("input", e => {
+document.getElementById("filter-queue").addEventListener("input", () => {
   refreshQueue()
 })
 document.getElementById("btn-previous-page").addEventListener("click", (e) => {
