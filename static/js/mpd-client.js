@@ -176,7 +176,7 @@ export default class MpdClient {
    * null to toggle.
    */
   pause (state) {
-    if (state === null) {
+    if (typeof state === "undefined" || state === null) {
       return this.send("pause\n")
     }
     return this.send(`pause ${state ? 1 : 0}\n`)
@@ -199,7 +199,8 @@ export default class MpdClient {
 
   /**
    * Seeks to the position.
-   * @param {Number} time Position to seek in seconds.
+   * If prefixed by + or -, then the time is relative to the current position.
+   * @param {String} time Position to seek in seconds.
    */
   seekCursor (time) {
     return this.send(`seekcur ${time}\n`)

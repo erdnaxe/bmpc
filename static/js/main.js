@@ -236,6 +236,23 @@ if ("mediaSession" in navigator) {
   navigator.mediaSession.setActionHandler("stop", () => {
     mpdClient.stop().then(refreshStatus)
   })
+  navigator.mediaSession.setActionHandler("seekbackward", e => {
+    if (e.seekOffset) {
+      mpdClient.seekCursor(e.seekOffset).then(refreshStatus)
+    } else {
+      mpdClient.seekCursor("-5").then(refreshStatus)
+    }
+  })
+  navigator.mediaSession.setActionHandler("seekforward", e => {
+    if (e.seekOffset) {
+      mpdClient.seekCursor(e.seekOffset).then(refreshStatus)
+    } else {
+      mpdClient.seekCursor("+5").then(refreshStatus)
+    }
+  })
+  navigator.mediaSession.setActionHandler("seekto", e => {
+    mpdClient.seekCursor(e.seekTime).then(refreshStatus)
+  })
   navigator.mediaSession.setActionHandler("previoustrack", () => {
     mpdClient.previous().then(refreshStatus).then(refreshCurrentSong)
   })
