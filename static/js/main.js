@@ -261,4 +261,9 @@ mpdClient.connect().then(() => {
   setInterval(refreshCurrentSong, 5000)
   setInterval(refreshStatus, 5000)
   setInterval(refreshQueue, 5000)
+
+  // Initial refresh
+  refreshCurrentSong()
+  refreshStatus()
+  refreshQueue()
 }).catch((e) => notify(e.message))
