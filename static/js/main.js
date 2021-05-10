@@ -271,12 +271,12 @@ window.onpopstate = (event) => {
 }
 
 mpdClient.connect().then(() => {
-  // Automatically refresh every 5 seconds
+  // Automatically refresh
   // These are useful when another MPD client is changing state.
   // When tab is not focused, the browser will slow down these.
   // TODO: Use `idle` feature from MPD.
   setInterval(refreshCurrentSong, 5000)
-  setInterval(refreshStatus, 5000)
+  setInterval(refreshStatus, 1000)
   setInterval(refreshQueue, 5000)
 
   // Initial refresh
