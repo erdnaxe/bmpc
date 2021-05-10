@@ -223,6 +223,14 @@ export default class MpdClient {
   }
 
   /**
+   * Adds the file URI to the playlist (directories add recursively).
+   * @param {String} uri URI to add.
+   */
+  add (uri) {
+    return this.send(`add "${uri}"\n`)
+  }
+
+  /**
    * Clears the queue.
    */
   clear () {
@@ -282,6 +290,14 @@ export default class MpdClient {
       }
     }
     return playlist
+  }
+
+  /**
+   * Saves the queue to NAME.m3u in the playlist directory.
+   * @param {String} name Name of the playlist.
+   */
+  save (name) {
+    return this.send(`save "${name}"\n`)
   }
 
   /**

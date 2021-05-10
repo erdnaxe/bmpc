@@ -169,20 +169,20 @@ document.getElementById("btn-toggle-crossfade").addEventListener("click", (e) =>
   e.preventDefault()
 })
 document.getElementById("btn-add-stream").addEventListener("click", (e) => {
-  const url = prompt("Stream URL")
-  if (url) {
-    // FIXME: mpdClient.addTrack(url).then(refreshQueue).catch((e) => notify(e.message))
+  const uri = prompt("Stream URL")
+  if (uri) {
+    mpdClient.add(uri).then(refreshQueue).catch((e) => notify(e.message))
   }
   e.preventDefault()
 })
 document.getElementById("btn-rm-all").addEventListener("click", (e) => {
-  // FIXME: mpdClient.rmAll().then(refreshQueue).catch((e) => notify(e.message))
+  mpdClient.clear().then(refreshQueue).catch((e) => notify(e.message))
   e.preventDefault()
 })
 document.getElementById("btn-save-queue").addEventListener("click", (e) => {
   const name = prompt("New playlist name")
   if (name) {
-    // FIXME: mpdClient.saveQueue(name).catch((e) => notify(e.message))
+    mpdClient.save(name).catch((e) => notify(e.message))
   }
   e.preventDefault()
 })
