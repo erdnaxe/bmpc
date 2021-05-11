@@ -43,6 +43,9 @@ a {
 input[type="range"] {
   display: block;
   width: 100%;
+  appearance: none;
+  background: #777;
+  height: 0.5em;
 }
 
 /* Search */
