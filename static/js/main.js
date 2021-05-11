@@ -252,19 +252,19 @@ document.getElementById("filter-queue").addEventListener("input", () => {
   refreshQueue()
 })
 document.getElementById("btn-previous-page").addEventListener("click", (e) => {
-  history.pushState({ queuePage }, "")
   queuePage--
+  history.pushState({ queuePage }, "")
   refreshQueue()
   e.preventDefault()
 })
 document.getElementById("btn-next-page").addEventListener("click", (e) => {
-  history.pushState({ queuePage }, "")
   queuePage++
+  history.pushState({ queuePage }, "")
   refreshQueue()
   e.preventDefault()
 })
 document.addEventListener("keydown", (e) => {
-  if (!e.repeat && e.target.tagName !== "INPUT") {
+  if (e.target.tagName !== "INPUT") {
     switch (e.key) {
     case " ":
       mpdClient.pause().then(refreshStatus).catch((e) => notify(e.message))
@@ -273,6 +273,27 @@ document.addEventListener("keydown", (e) => {
     case "f":
       if (e.ctrlKey) {
         document.getElementById("filter-queue").focus()
+        e.preventDefault()
+      }
+      break
+    case "ArrowLeft":
+      if (queuePage > 0) {
+        if (e.shiftKey) {
+          queuePage = 0
+        } else {
+          queuePage--
+        }
+        history.pushState({ queuePage }, "")
+        refreshQueue()
+        e.preventDefault()
+      }
+      break
+    case "ArrowRight":
+      // TODO: get track count in playlist and implement Shift+RightArrow
+      if (document.querySelector("#playlist > tbody").childElementCount >= songsPerPage) {
+        queuePage++
+        history.pushState({ queuePage }, "")
+        refreshQueue()
         e.preventDefault()
       }
       break
