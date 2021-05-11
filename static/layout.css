@@ -73,6 +73,7 @@ tr:hover>td {
   background-color: rgba(255, 255, 255, 0.1);
 }
 table i {
+  display: block;
   font-size: 90%;
 }
 tbody {

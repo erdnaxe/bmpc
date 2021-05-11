@@ -25,9 +25,9 @@ function notify (text) {
 
 async function refreshCurrentSong () {
   const data = await mpdClient.currentSong()
-  document.getElementById("currenttrack").textContent = data.Title
-  document.getElementById("album").textContent = data.Album || ""
-  document.getElementById("artist").textContent = data.Artist || ""
+  document.getElementById("currenttrack").textContent = data.Title || data.file
+  document.getElementById("album").textContent = data.Album || data.Name || "Unknown"
+  document.getElementById("artist").textContent = data.Artist || "Unknown"
 
   // Update media session
   if ("mediaSession" in navigator) {
@@ -52,12 +52,22 @@ async function refreshStatus () {
   }
 
   // Update progress bar
-  document.getElementById("progress-bar").value = data.elapsed
-  document.getElementById("progress-bar").max = data.duration
+  if (data.elapsed !== undefined && data.duration !== undefined) {
+    document.getElementById("progress-bar").value = data.elapsed
+    document.getElementById("progress-bar").max = data.duration
+  } else {
+    document.getElementById("progress-bar").value = 0
+  }
 
   // Update progress counter
-  const elapsed = new Date(data.elapsed * 1000).toISOString().substr(14, 5)
-  const duration = new Date(data.duration * 1000).toISOString().substr(14, 5)
+  let elapsed = "-"
+  let duration = "-"
+  if (data.elapsed !== undefined) {
+    elapsed = new Date(data.elapsed * 1000).toISOString().substr(14, 5)
+  }
+  if (data.duration !== undefined) {
+    duration = new Date(data.duration * 1000).toISOString().substr(14, 5)
+  }
   document.getElementById("counter").textContent = `${elapsed} / ${duration}`
 
   // Update playback settings
@@ -110,14 +120,17 @@ async function refreshQueue () {
   const activeSong = document.getElementById("playlist").dataset.activeSong
   for (const song of data) {
     // Format metadata
-    const time = new Date(song.Time * 1000).toISOString().substr(14, 5)
+    let time = "-"
+    if (song.Time !== undefined) {
+      time = new Date(song.Time * 1000).toISOString().substr(14, 5)
+    }
     let trackDescription = ""
     if (song.Disc && song.Track) {
       trackDescription = `Disc ${song.Disc}, track ${song.Track}`
     } else if (song.Track) {
       trackDescription = `Track ${song.Track}`
     }
-    let albumDescription = `${song.Album}`
+    let albumDescription = `${song.Album || song.Name || ""}`
     if (song.Date) {
       const year = new Date(song.Date).getFullYear()
       albumDescription += ` (${year})`
@@ -127,8 +140,8 @@ async function refreshQueue () {
     const row = document.createElement("tr")
     row.dataset.trackId = song.Pos
     row.innerHTML = `<td>${parseInt(song.Pos) + 1}</td>` +
-      `<td>${song.Artist}<br /><i>${albumDescription}</i></td>` +
-      `<td>${song.Title}<br /><i>${trackDescription}</i></td><td>${time}</td>`
+      `<td>${song.Artist || ""}<i>${albumDescription}</i></td>` +
+      `<td>${song.Title || song.file}<i>${trackDescription}</i></td><td>${time}</td>`
     row.title = song.file
     const removeTd = document.createElement("td")
     removeTd.innerHTML = "✕"
