@@ -109,12 +109,27 @@ async function refreshQueue () {
   // Fill table with playlist
   const activeSong = document.getElementById("playlist").dataset.activeSong
   for (const song of data) {
+    // Format metadata
     const time = new Date(song.Time * 1000).toISOString().substr(14, 5)
+    let trackDescription = ""
+    if (song.Disc && song.Track) {
+      trackDescription = `Disc ${song.Disc}, track ${song.Track}`
+    } else if (song.Track) {
+      trackDescription = `Track ${song.Track}`
+    }
+    let albumDescription = `${song.Album}`
+    if (song.Date) {
+      const year = new Date(song.Date).getFullYear()
+      albumDescription += ` (${year})`
+    }
+
+    // Create table row
     const row = document.createElement("tr")
     row.dataset.trackId = song.Pos
     row.innerHTML = `<td>${parseInt(song.Pos) + 1}</td>` +
-      `<td>${song.Artist}<br /><span>${song.Album}</span></td>` +
-      `<td>${song.Title}</td><td>${time}</td>`
+      `<td>${song.Artist}<br /><i>${albumDescription}</i></td>` +
+      `<td>${song.Title}<br /><i>${trackDescription}</i></td><td>${time}</td>`
+    row.title = song.file
     const removeTd = document.createElement("td")
     removeTd.innerHTML = "✕"
     row.appendChild(removeTd)
