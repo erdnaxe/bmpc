@@ -72,20 +72,20 @@ td, th {
 tr:hover>td {
   background-color: rgba(255, 255, 255, 0.1);
 }
-td:nth-last-child(2), th:nth-last-child(2) {
-  text-align: right;
-}
 table i {
   font-size: 90%;
 }
 tbody {
   cursor: pointer;
 }
-td:last-child, td:first-child {
-  width: 1em;
-}
 tr.active {
   font-weight: bold;
+}
+#playlist td:nth-last-child(2), th:nth-last-child(2) {
+  text-align: right;
+}
+#playlist td:last-child, td:first-child {
+  width: 1em;
 }
 
 /* Link */
@@ -107,6 +107,11 @@ a svg {
 .btn-group a {
   padding: 5px;
   display: inline-block;
+}
+@media print {
+  .btn-group a, input, #playlist th:last-child, #playlist td:last-child {
+     display: none !important;
+  }
 }
 
 /* Notification */
