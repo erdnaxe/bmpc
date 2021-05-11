@@ -25,14 +25,21 @@ function notify (text) {
 
 async function refreshCurrentSong () {
   const data = await mpdClient.currentSong()
-  document.getElementById("currenttrack").textContent = data.Title || data.file
-  document.getElementById("album").textContent = data.Album || data.Name || "Unknown"
+  document.getElementById("currenttrack").textContent = data.Title || data.Name || data.file
+  document.getElementById("currenttrack").title = data.file
+  document.getElementById("album").textContent = data.Album || "Unknown"
   document.getElementById("artist").textContent = data.Artist || "Unknown"
+
+  // If track is remote, show download button
+  const remotePattern = /^https?:\/\//i
+  const btnDownload = document.getElementById("btn-download")
+  btnDownload.classList.toggle("hide", !remotePattern.test(data.file))
+  btnDownload.href = data.file
 
   // Update media session
   if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new window.MediaMetadata({
-      title: data.Title,
+      title: data.Title || data.Name || data.file,
       artist: data.Artist || "",
       album: data.Album || ""
     })
@@ -133,7 +140,7 @@ async function refreshQueue () {
     } else if (song.Track) {
       trackDescription = `Track ${song.Track}`
     }
-    let albumDescription = `${song.Album || song.Name || ""}`
+    let albumDescription = `${song.Album || ""}`
     if (song.Date) {
       const year = new Date(song.Date).getFullYear()
       albumDescription += ` (${year})`
@@ -144,7 +151,7 @@ async function refreshQueue () {
     row.dataset.trackId = song.Pos
     row.innerHTML = `<td>${parseInt(song.Pos) + 1}</td>` +
       `<td>${song.Artist || ""}<i>${albumDescription}</i></td>` +
-      `<td>${song.Title || song.file}<i>${trackDescription}</i></td><td>${time}</td>`
+      `<td>${song.Title || song.Name || song.file}<i>${trackDescription}</i></td><td>${time}</td>`
     row.title = song.file
     const removeTd = document.createElement("td")
     removeTd.innerHTML = "✕"
