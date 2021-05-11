@@ -1,17 +1,32 @@
 html {
   font-family: sans-serif;
 }
-
 body {
-  background: #1f2424;
   margin: 0;
+}
+
+/* Colors */
+body {
+  background: #d4d4d4;
+  color: #1f2424;
+}
+a {
+  color: #000;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1f2424;
+    color: #d4d4d4;
+  }
+  a {
+    color: #fff;
+  }
 }
 
 /* Panels */
 .panel {
   margin: 2em auto;
   max-width: 1170px;
-  color: #d4d4d4;
   border: 1px dotted #a1a1a1;
 }
 .panel-body {
@@ -34,7 +49,7 @@ input[type="range"] {
 input[type="search"] {
   background: inherit;
   color: inherit;
-  border: 1px dotted #fff;
+  border: 1px dotted #a1a1a1;
   padding: 0.2em;
   width: 10em;
 }
@@ -72,7 +87,6 @@ tr.active {
 
 /* Link */
 a {
-  color: #ffffff;
   text-decoration: none;
 }
 a:hover {
@@ -80,7 +94,7 @@ a:hover {
   text-decoration: none;
 }
 a.active {
-  color: #84c6ff;
+  color: #699ecc;
   font-weight: bold;
 }
 a svg {
@@ -99,9 +113,8 @@ a svg {
   left: 50%;
   transform: translateX(-50%);
   max-width: 1170px;
-  color: #d4d4d4;
   border: 1px dotted #a1a1a1;
-  background-color: #1f2424;
+  background-color: inherit;
   padding: 1em;
 }
 
