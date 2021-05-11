@@ -89,6 +89,9 @@ async function refreshStatus () {
     el.classList.add("active")
   })
 
+  // Keep update database button active until update ends
+  document.getElementById("btn-update-database").classList.toggle("active", data.updating_db || 0)
+
   // Update media session
   if ("mediaSession" in navigator) {
     navigator.mediaSession.playbackState = (data.state === "play") ? "playing" : "paused"
