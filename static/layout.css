@@ -48,8 +48,8 @@ input[type="range"] {
   height: 0.5em;
 }
 
-/* Search */
-input[type="search"] {
+/* Search and login */
+input[type="search"], input[type="password"] {
   background: inherit;
   color: inherit;
   border: 1px dotted #a1a1a1;

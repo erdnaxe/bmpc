@@ -316,4 +316,12 @@ export default class MpdClient {
   update () {
     return this.send("update\n")
   }
+
+  /**
+   * This is used for authentication with the server.
+   * @param {String} password Password used to log in.
+   */
+  password (password) {
+    return this.send(`password "${password}"\n`)
+  }
 }

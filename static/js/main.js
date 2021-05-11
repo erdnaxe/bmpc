@@ -23,6 +23,34 @@ function notify (text) {
   }, 3000)
 }
 
+// Login prompt shown when user has not enough privileges
+function loginPrompt () {
+  const loginBox = document.createElement("div")
+  loginBox.textContent = "Please enter password: "
+  loginBox.classList.add("notification")
+  const passwordInput = document.createElement("input")
+  passwordInput.type = "password"
+  passwordInput.addEventListener("keyup", e => {
+    if (e.key === "Enter") {
+      document.body.removeChild(loginBox)
+      mpdClient.password(passwordInput.value).then(() => {
+        notify("Successfully logged in.")
+      }).catch(errorHandler)
+    }
+  })
+  loginBox.appendChild(passwordInput)
+  document.body.appendChild(loginBox)
+}
+
+// Inspect error and prompt login if it is a permission error
+function errorHandler (err) {
+  if (err.message.includes("you don't have permission for")) {
+    loginPrompt()
+  } else {
+    notify(err.message)
+  }
+}
+
 async function refreshCurrentSong () {
   const data = await mpdClient.currentSong()
   document.getElementById("currenttrack").textContent = data.Title || data.Name || data.file
@@ -110,7 +138,7 @@ async function refreshQueue () {
   let data = []
   if (filter.length > 2) {
     // Get filtered queue
-    data = await mpdClient.playlistSearch(`(any contains '${filter}')`).catch(e => notify(e.message))
+    data = await mpdClient.playlistSearch(`(any contains '${filter}')`).catch(errorHandler)
 
     // Crop to `songsPerPage` elements
     data = data.slice(0, songsPerPage)
@@ -188,71 +216,71 @@ async function refreshQueue () {
 
 // Register events
 document.getElementById("progress-bar").addEventListener("input", (e) => {
-  mpdClient.seekCursor(e.target.value).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.seekCursor(e.target.value).then(refreshStatus).catch(errorHandler)
 })
 document.getElementById("btn-set-prev").addEventListener("click", (e) => {
-  mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch((e) => notify(e.message))
+  mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-set-play").addEventListener("click", (e) => {
-  mpdClient.pause(0).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-set-pause").addEventListener("click", (e) => {
-  mpdClient.pause(1).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.pause(1).then(refreshStatus).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-set-next").addEventListener("click", (e) => {
-  mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch((e) => notify(e.message))
+  mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-toggle-random").addEventListener("click", (e) => {
   const active = e.target.classList.contains("active")
-  mpdClient.setRandom(!active).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-toggle-repeat").addEventListener("click", (e) => {
   const active = e.target.classList.contains("active")
-  mpdClient.setRepeat(!active).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-toggle-consume").addEventListener("click", (e) => {
   const active = e.target.classList.contains("active")
-  mpdClient.setConsume(!active).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-toggle-single").addEventListener("click", (e) => {
   const active = e.target.classList.contains("active")
-  mpdClient.setSingle(!active).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-toggle-crossfade").addEventListener("click", (e) => {
   const state = e.target.classList.contains("active")
-  mpdClient.setCrossfade(state ? 0 : 3).then(refreshStatus).catch((e) => notify(e.message))
+  mpdClient.setCrossfade(state ? 0 : 3).then(refreshStatus).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-add-stream").addEventListener("click", (e) => {
   const uri = prompt("Stream URL")
   if (uri) {
-    mpdClient.add(uri).then(refreshQueue).catch((e) => notify(e.message))
+    mpdClient.add(uri).then(refreshQueue).catch(errorHandler)
   }
   e.preventDefault()
 })
 document.getElementById("btn-rm-all").addEventListener("click", (e) => {
-  mpdClient.clear().then(refreshQueue).catch((e) => notify(e.message))
+  mpdClient.clear().then(refreshQueue).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("btn-save-queue").addEventListener("click", (e) => {
   const name = prompt("New playlist name")
   if (name) {
-    mpdClient.save(name).catch((e) => notify(e.message))
+    mpdClient.save(name).catch(errorHandler)
   }
   e.preventDefault()
 })
 document.getElementById("btn-update-database").addEventListener("click", (e) => {
   mpdClient.update().then(() => {
     notify("Updating MPD database")
-  }).catch((e) => notify(e.message))
+  }).catch(errorHandler)
   e.preventDefault()
 })
 document.getElementById("filter-queue").addEventListener("input", () => {
@@ -274,7 +302,7 @@ document.addEventListener("keydown", (e) => {
   if (e.target.tagName !== "INPUT") {
     switch (e.key) {
     case " ":
-      mpdClient.pause().then(refreshStatus).catch((e) => notify(e.message))
+      mpdClient.pause().then(refreshStatus).catch(errorHandler)
       e.preventDefault()
       break
     case "f":
@@ -374,4 +402,4 @@ mpdClient.connect().then(() => {
 
   // Initial refresh
   refreshCurrentSong().then(refreshStatus).then(refreshQueue)
-}).catch((e) => notify(e.message))
+}).catch(errorHandler)
