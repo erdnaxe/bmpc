@@ -158,7 +158,7 @@ async function refreshQueue () {
     // Remove track on remove button click
     removeTd.addEventListener("click", () => {
       newTableBody.removeChild(row)
-      mpdClient.delete(song.Pos).then(refreshQueue) // FIXME: bug, does not refresh and play
+      mpdClient.delete(song.Pos).then(refreshQueue).then(refreshStatus)
     })
 
     // On click, jump to track
