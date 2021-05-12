@@ -12,7 +12,7 @@ export default class QueuePanel {
 
     // Define event callbacks
     this.gotPlay = (event) =>  {
-      this.mpdClient.play(event.target.dataset.trackId).then(this.refreshStatus)
+      this.mpdClient.play(event.currentTarget.dataset.trackId).then(this.refreshStatus)
         .then(this.refreshCurrentSong).catch(this.errorHandler)
     }
     this.gotRemove = (event) => {
