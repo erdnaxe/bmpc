@@ -25,7 +25,11 @@ function notify (text) {
 
 // Login prompt shown when user has not enough privileges
 function loginPrompt () {
+  if (document.getElementById("login-prompt")) {
+    return // Already exist
+  }
   const loginBox = document.createElement("div")
+  loginBox.id = "login-prompt"
   loginBox.textContent = "Please enter password: "
   loginBox.classList.add("notification")
   const passwordInput = document.createElement("input")
@@ -40,6 +44,7 @@ function loginPrompt () {
   })
   loginBox.appendChild(passwordInput)
   document.body.appendChild(loginBox)
+  passwordInput.focus()
 }
 
 // Inspect error and prompt login if it is a permission error
