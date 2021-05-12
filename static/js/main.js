@@ -1,6 +1,6 @@
+import Favicon from "./favicon.js"
 import MpdClient from "./mpd-client.js"
 import sortable from "./html5sortable.es.min.js"
-import Favicon from "./favicon.js"
 
 // Create MPD client
 const mpdClient = new MpdClient()
@@ -34,7 +34,7 @@ function loginPrompt () {
   loginBox.classList.add("notification")
   const passwordInput = document.createElement("input")
   passwordInput.type = "password"
-  passwordInput.addEventListener("keyup", e => {
+  passwordInput.addEventListener("keyup", (e) => {
     if (e.key === "Enter") {
       document.body.removeChild(loginBox)
       mpdClient.password(passwordInput.value).then(() => {
@@ -121,11 +121,11 @@ async function refreshStatus () {
   const oldActive = document.getElementById("playlist").dataset.activeSong
   document.getElementById("playlist").dataset.activeSong = data.song
   if (oldActive) {
-    document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${oldActive}"]`).forEach(el => {
+    document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${oldActive}"]`).forEach((el) => {
       el.classList.remove("active")
     })
   }
-  document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${data.song}"]`).forEach(el => {
+  document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${data.song}"]`).forEach((el) => {
     el.classList.add("active")
   })
 
@@ -134,7 +134,7 @@ async function refreshStatus () {
 
   // Update media session
   if ("mediaSession" in navigator) {
-    navigator.mediaSession.playbackState = (data.state === "play") ? "playing" : "paused"
+    navigator.mediaSession.playbackState = data.state === "play" ? "playing" : "paused"
   }
 }
 
@@ -365,21 +365,21 @@ if ("mediaSession" in navigator) {
   navigator.mediaSession.setActionHandler("stop", () => {
     mpdClient.stop().then(refreshStatus).catch(errorHandler)
   })
-  navigator.mediaSession.setActionHandler("seekbackward", e => {
+  navigator.mediaSession.setActionHandler("seekbackward", (e) => {
     if (e.seekOffset) {
       mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
     } else {
       mpdClient.seekCursor("-5").then(refreshStatus).catch(errorHandler)
     }
   })
-  navigator.mediaSession.setActionHandler("seekforward", e => {
+  navigator.mediaSession.setActionHandler("seekforward", (e) => {
     if (e.seekOffset) {
       mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
     } else {
       mpdClient.seekCursor("+5").then(refreshStatus).catch(errorHandler)
     }
   })
-  navigator.mediaSession.setActionHandler("seekto", e => {
+  navigator.mediaSession.setActionHandler("seekto", (e) => {
     mpdClient.seekCursor(e.seekTime).then(refreshStatus).catch(errorHandler)
   })
   navigator.mediaSession.setActionHandler("previoustrack", () => {

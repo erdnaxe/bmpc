@@ -23,6 +23,16 @@
         "semi": [
             "error",
             "never"
-        ]
+        ],
+        "no-console": 1,
+        "no-extra-parens": 2,
+        "arrow-parens": 2,
+        "require-atomic-updates": 2,
+        "eqeqeq": [
+            "error",
+            "smart"
+        ],
+        "prefer-template": 2,
+        "sort-imports": 1
     }
 }
