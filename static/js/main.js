@@ -1,4 +1,5 @@
 import Favicon from "./component/Favicon.js"
+import MediaSession from "./component/MediaSession.js"
 import MpdClient from "./mpd-client.js"
 import PlayerControl from "./component/PlayerControl.js"
 import sortable from "./html5sortable.es.min.js"
@@ -7,6 +8,7 @@ import sortable from "./html5sortable.es.min.js"
 const mpdClient = new MpdClient()
 const favicon = new Favicon()
 const playerControl = new PlayerControl(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
+const mediaSession = new MediaSession(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
 
 // Pagination
 let queuePage = 0
@@ -59,20 +61,13 @@ function errorHandler (err) {
 async function refreshCurrentSong () {
   const data = await mpdClient.currentSong().catch(errorHandler)
   playerControl.updateCurrentSong(data)
-
-  // Update media session
-  if ("mediaSession" in navigator) {
-    navigator.mediaSession.metadata = new window.MediaMetadata({
-      title: data.Title || data.Name || data.file,
-      artist: data.Artist || "",
-      album: data.Album || ""
-    })
-  }
+  mediaSession.updateCurrentSong(data)
 }
 
 async function refreshStatus () {
   const data = await mpdClient.status().catch(errorHandler)
   playerControl.updateStatus(data)
+  mediaSession.updateStatus(data)
 
   // Update favicon
   if (data.state === "play") {
@@ -95,11 +90,6 @@ async function refreshStatus () {
 
   // Keep update database button active until update ends
   document.getElementById("btn-update-database").classList.toggle("active", data.updating_db || 0)
-
-  // Update media session
-  if ("mediaSession" in navigator) {
-    navigator.mediaSession.playbackState = data.state === "play" ? "playing" : "paused"
-  }
 }
 
 async function refreshQueue () {
@@ -263,47 +253,6 @@ document.addEventListener("keydown", (e) => {
 mpdClient.onClose = () => {
   notify("Connection to server lost, retrying in 3 seconds")
   setTimeout(() => mpdClient.connect(), 3000)
-}
-
-// Configure media session actions
-if ("mediaSession" in navigator) {
-  // Play blank audio to take audio focus and allow media control
-  const audio = new Audio("/blank.ogg")
-  audio.loop = false
-  audio.play()
-
-  navigator.mediaSession.setActionHandler("play", () => {
-    mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
-  })
-  navigator.mediaSession.setActionHandler("pause", () => {
-    mpdClient.pause(1).then(refreshStatus).catch(errorHandler)
-  })
-  navigator.mediaSession.setActionHandler("stop", () => {
-    mpdClient.stop().then(refreshStatus).catch(errorHandler)
-  })
-  navigator.mediaSession.setActionHandler("seekbackward", (e) => {
-    if (e.seekOffset) {
-      mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
-    } else {
-      mpdClient.seekCursor("-5").then(refreshStatus).catch(errorHandler)
-    }
-  })
-  navigator.mediaSession.setActionHandler("seekforward", (e) => {
-    if (e.seekOffset) {
-      mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
-    } else {
-      mpdClient.seekCursor("+5").then(refreshStatus).catch(errorHandler)
-    }
-  })
-  navigator.mediaSession.setActionHandler("seekto", (e) => {
-    mpdClient.seekCursor(e.seekTime).then(refreshStatus).catch(errorHandler)
-  })
-  navigator.mediaSession.setActionHandler("previoustrack", () => {
-    mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-  })
-  navigator.mediaSession.setActionHandler("nexttrack", () => {
-    mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-  })
 }
 
 // Configure history
