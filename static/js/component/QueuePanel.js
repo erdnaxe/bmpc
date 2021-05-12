@@ -58,6 +58,15 @@ export default class QueuePanel {
             e.preventDefault()
           }
           break
+        case "s":
+          if (e.ctrlKey) {
+            const name = prompt("New playlist name")
+            if (name) {
+              mpdClient.save(name).catch(errorHandler)
+            }
+            e.preventDefault()
+          }
+          break
         case "ArrowLeft":
           if (this.queuePage > 0) {
             if (e.shiftKey) {
