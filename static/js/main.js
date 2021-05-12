@@ -144,6 +144,9 @@ async function refreshQueue () {
   if (filter.length > 2) {
     // Get filtered queue
     data = await mpdClient.playlistSearch(`(any contains '${filter}')`).catch(errorHandler)
+    if (!data) {
+      return
+    }
 
     // Crop to `songsPerPage` elements
     data = data.slice(0, songsPerPage)
@@ -198,12 +201,12 @@ async function refreshQueue () {
     // Remove track on remove button click
     removeTd.addEventListener("click", () => {
       newTableBody.removeChild(row)
-      mpdClient.delete(song.Pos).then(refreshQueue).then(refreshStatus)
+      mpdClient.delete(song.Pos).then(refreshQueue).then(refreshStatus).catch(errorHandler)
     })
 
     // On click, jump to track
     row.addEventListener("click", () => {
-      mpdClient.play(song.Pos).then(refreshStatus).then(refreshCurrentSong)
+      mpdClient.play(song.Pos).then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
     })
   }
 
@@ -215,7 +218,7 @@ async function refreshQueue () {
   sortable(newTableBody)[0].addEventListener("sortupdate", (e) => {
     const from = queuePage * songsPerPage + e.detail.origin.index
     const to = queuePage * songsPerPage + e.detail.destination.index
-    mpdClient.move(from, to).then(refreshQueue)
+    mpdClient.move(from, to).then(refreshQueue).catch(errorHandler)
   })
 }
 
@@ -354,36 +357,36 @@ if ("mediaSession" in navigator) {
   audio.play()
 
   navigator.mediaSession.setActionHandler("play", () => {
-    mpdClient.pause(0).then(refreshStatus)
+    mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
   })
   navigator.mediaSession.setActionHandler("pause", () => {
-    mpdClient.pause(1).then(refreshStatus)
+    mpdClient.pause(1).then(refreshStatus).catch(errorHandler)
   })
   navigator.mediaSession.setActionHandler("stop", () => {
-    mpdClient.stop().then(refreshStatus)
+    mpdClient.stop().then(refreshStatus).catch(errorHandler)
   })
   navigator.mediaSession.setActionHandler("seekbackward", e => {
     if (e.seekOffset) {
-      mpdClient.seekCursor(e.seekOffset).then(refreshStatus)
+      mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
     } else {
-      mpdClient.seekCursor("-5").then(refreshStatus)
+      mpdClient.seekCursor("-5").then(refreshStatus).catch(errorHandler)
     }
   })
   navigator.mediaSession.setActionHandler("seekforward", e => {
     if (e.seekOffset) {
-      mpdClient.seekCursor(e.seekOffset).then(refreshStatus)
+      mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
     } else {
-      mpdClient.seekCursor("+5").then(refreshStatus)
+      mpdClient.seekCursor("+5").then(refreshStatus).catch(errorHandler)
     }
   })
   navigator.mediaSession.setActionHandler("seekto", e => {
-    mpdClient.seekCursor(e.seekTime).then(refreshStatus)
+    mpdClient.seekCursor(e.seekTime).then(refreshStatus).catch(errorHandler)
   })
   navigator.mediaSession.setActionHandler("previoustrack", () => {
-    mpdClient.previous().then(refreshStatus).then(refreshCurrentSong)
+    mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
   })
   navigator.mediaSession.setActionHandler("nexttrack", () => {
-    mpdClient.next().then(refreshStatus).then(refreshCurrentSong)
+    mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
   })
 }
 
