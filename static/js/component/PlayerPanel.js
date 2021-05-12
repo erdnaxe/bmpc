@@ -1,3 +1,5 @@
+"use strict"
+
 export default class PlayerPanel {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
     // Register events

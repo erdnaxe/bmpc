@@ -1,3 +1,5 @@
+"use strict"
+
 /**
  * Implement https://www.musicpd.org/doc/html/protocol.html
  */

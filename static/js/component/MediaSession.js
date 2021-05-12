@@ -1,3 +1,5 @@
+"use strict"
+
 export default class MediaSession {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
     // Configure media session actions

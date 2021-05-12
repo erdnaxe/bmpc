@@ -1,13 +1,24 @@
-import sortable from "../html5sortable.es.min.js"
+"use strict"
 
 export default class QueuePanel {
   constructor (mpdClient, notify, errorHandler) {
     this.mpdClient = mpdClient
     this.errorHandler = errorHandler
+    this.tableBody = document.querySelector("#playlist > tbody")
 
     // Pagination
     this.queuePage = 0
     this.songsPerPage = 100
+
+    // Define event callbacks
+    this.gotPlay = (event) =>  {
+      this.mpdClient.play(event.target.dataset.trackId).then(this.refreshStatus)
+        .then(this.refreshCurrentSong).catch(this.errorHandler)
+    }
+    this.gotRemove = (event) => {
+      const row = event.currentTarget.parentNode
+      this.mpdClient.delete(row.dataset.trackId).then(this.refreshQueue).then(this.refreshStatus).catch(this.errorHandler)
+    }
 
     // Register events
     document.getElementById("btn-add-stream").addEventListener("click", (e) => {
@@ -81,7 +92,7 @@ export default class QueuePanel {
           break
         case "ArrowRight":
           // TODO: get track count in playlist and implement Shift+RightArrow
-          if (document.querySelector("#playlist > tbody").childElementCount >= this.songsPerPage) {
+          if (this.tableBody.childElementCount >= this.songsPerPage) {
             this.queuePage++
             history.pushState({ queuePage: this.queuePage }, "")
             this.refreshQueue()
@@ -135,7 +146,7 @@ export default class QueuePanel {
       if (!data) {
         return
       }
-  
+
       // Crop to `songsPerPage` elements
       data = data.slice(0, this.songsPerPage)
     } else {
@@ -144,16 +155,21 @@ export default class QueuePanel {
       const end = (this.queuePage + 1) * this.songsPerPage
       data = await this.mpdClient.playlistInfo(start, end).catch(this.errorHandler)
     }
-  
-    // Create new table body
-    const oldTableBody = document.querySelector("#playlist > tbody")
-    const newTableBody = document.createElement("tbody")
-    oldTableBody.parentNode.replaceChild(newTableBody, oldTableBody)
+
+    // Empty table body
+    while (this.tableBody.firstChild) {
+      if (this.tableBody.lastChild instanceof HTMLTableRowElement) {
+        // Clear events before removing for garbage collection
+        this.tableBody.lastChild.removeEventListener("click", this.gotPlay)
+        this.tableBody.lastChild.lastChild.removeEventListener("click", this.gotRemove)
+      }
+      this.tableBody.removeChild(this.tableBody.lastChild)
+    }
 
     // Fill table with playlist
     const activeSong = document.getElementById("playlist").dataset.activeSong
     for (const song of data) {
-    // Format metadata
+      // Format metadata
       let time = "-"
       if (song.Time !== undefined) {
         time = new Date(song.Time * 1000).toISOString().substr(14, 5)
@@ -180,33 +196,20 @@ export default class QueuePanel {
       const removeTd = document.createElement("td")
       removeTd.innerHTML = "✕"
       row.appendChild(removeTd)
-      newTableBody.appendChild(row)
+      this.tableBody.appendChild(row)
       if (song.Pos === activeSong) {
-      // Style current song
-        row.classList.add("active")
+        row.classList.add("active") // Style current song
       }
 
       // Remove track on remove button click
-      removeTd.addEventListener("click", () => {
-        newTableBody.removeChild(row)
-        this.mpdClient.delete(song.Pos).then(this.refreshQueue).then(this.refreshStatus).catch(this.errorHandler)
-      })
+      removeTd.addEventListener("click", this.gotRemove)
 
       // On click, jump to track
-      row.addEventListener("click", () => {
-        this.mpdClient.play(song.Pos).then(this.refreshStatus).then(this.refreshCurrentSong).catch(this.errorHandler)
-      })
+      row.addEventListener("click", this.gotPlay)
     }
 
     // Show pagination
     document.getElementById("btn-previous-page").classList.toggle("hide", this.queuePage <= 0)
     document.getElementById("btn-next-page").classList.toggle("hide", data.length < this.songsPerPage)
-
-    // Make queue table sortable
-    sortable(newTableBody)[0].addEventListener("sortupdate", (e) => {
-      const from = this.queuePage * this.songsPerPage + e.detail.origin.index
-      const to = this.queuePage * this.songsPerPage + e.detail.destination.index
-      this.mpdClient.move(from, to).then(this.refreshQueue).catch(this.errorHandler)
-    })
   }
 }

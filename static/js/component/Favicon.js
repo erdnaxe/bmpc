@@ -1,3 +1,5 @@
+"use strict"
+
 /**
  * Build a favicon using text in a canvas
  */

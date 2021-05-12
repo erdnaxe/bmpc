@@ -1,3 +1,5 @@
+"use strict"
+
 import Favicon from "./component/Favicon.js"
 import MediaSession from "./component/MediaSession.js"
 import MpdClient from "./mpd-client.js"
