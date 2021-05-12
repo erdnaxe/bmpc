@@ -136,6 +136,24 @@ export default class MpdClient {
   }
 
   /**
+   * Displays server statistics.
+   */
+  async stats () {
+    const data = await this.send("stats\n")
+
+    // Parse status
+    const status = {}
+    for (const entry of data) {
+      if (isNaN(entry[1])) {
+        status[entry[0]] = entry[1]
+      } else {
+        status[entry[0]] = parseInt(entry[1])
+      }
+    }
+    return status
+  }
+
+  /**
    * When consume is activated, each song played is removed from playlist.
    * @param {Boolean} state True to active, false to deactivate.
    */
@@ -315,6 +333,38 @@ export default class MpdClient {
    */
   update () {
     return this.send("update\n")
+  }
+
+  /**
+   * Reads a sticker value for the specified object.
+   * @param {String} type Object type (“song” for song objects).
+   * @param {String} uri Path within the database.
+   * @param {String} name Name of sticker.
+   */
+  async stickerGet (type, uri, name) {
+    const stickers = await this.send(`sticker get "${type}" "${uri}" "${name}"\n`)
+    return stickers[0][1].split("=")[1]
+  }
+
+  /**
+   * Adds a sticker value to the specified object.
+   * If a sticker item with that name already exists, it is replaced.
+   * @param {String} type Object type (“song” for song objects).
+   * @param {String} uri Path within the database.
+   * @param {String} name Name of sticker.
+   * @param {String} value Value of sticker.
+   */
+  stickerSet (type, uri, name, value) {
+    return this.send(`sticker set "${type}" "${uri}" "${name}" "${value}"\n`)
+  }
+
+  /**
+   * Lists the stickers for the specified object.
+   * @param {String} type Object type (“song” for song objects).
+   * @param {String} uri Path within the database.
+   */
+  stickerList (type, uri) {
+    return this.send(`sticker list "${type}" "${uri}"\n`)
   }
 
   /**
