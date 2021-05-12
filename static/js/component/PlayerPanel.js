@@ -88,8 +88,8 @@ export default class PlayerPanel {
 
     // Update progress bar
     if (data.elapsed !== undefined && data.duration !== undefined) {
-      document.getElementById("progress-bar").value = data.elapsed
       document.getElementById("progress-bar").max = data.duration
+      document.getElementById("progress-bar").value = data.elapsed
     } else {
       document.getElementById("progress-bar").value = 0
     }
