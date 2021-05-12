@@ -57,7 +57,7 @@ function errorHandler (err) {
 }
 
 async function refreshCurrentSong () {
-  const data = await mpdClient.currentSong()
+  const data = await mpdClient.currentSong().catch(errorHandler)
   document.getElementById("currenttrack").textContent = data.Title || data.Name || data.file
   document.getElementById("currenttrack").title = data.file
   document.getElementById("album").textContent = data.Album || "Unknown"
@@ -80,7 +80,7 @@ async function refreshCurrentSong () {
 }
 
 async function refreshStatus () {
-  const data = await mpdClient.status()
+  const data = await mpdClient.status().catch(errorHandler)
 
   // Update play/pause buttons
   document.getElementById("btn-set-play").classList.toggle("hide", data.state === "play")
@@ -154,7 +154,7 @@ async function refreshQueue () {
     // Get non filtered queue
     const start = queuePage * songsPerPage
     const end = (queuePage + 1) * songsPerPage
-    data = await mpdClient.playlistInfo(start, end)
+    data = await mpdClient.playlistInfo(start, end).catch(errorHandler)
   }
 
   // Create new table body
@@ -404,9 +404,9 @@ mpdClient.connect().then(() => {
   // These are useful when another MPD client is changing state.
   // When tab is not focused, the browser will slow down these.
   // TODO: Use `idle` feature from MPD.
-  setInterval(refreshCurrentSong, 5000)
-  setInterval(refreshStatus, 1000)
-  setInterval(refreshQueue, 5000)
+  setInterval(() => {
+    refreshCurrentSong().then(refreshStatus).then(refreshQueue)
+  }, 1000)
 
   // Initial refresh
   refreshCurrentSong().then(refreshStatus).then(refreshQueue)
