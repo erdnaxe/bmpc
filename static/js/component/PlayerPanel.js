@@ -1,4 +1,4 @@
-export default class PlayerControl {
+export default class PlayerPanel {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
     // Register events
     document.getElementById("progress-bar").addEventListener("input", (e) => {

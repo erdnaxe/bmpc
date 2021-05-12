@@ -1,13 +1,13 @@
 import Favicon from "./component/Favicon.js"
 import MediaSession from "./component/MediaSession.js"
 import MpdClient from "./mpd-client.js"
-import PlayerControl from "./component/PlayerControl.js"
+import PlayerPanel from "./component/PlayerPanel.js"
 import QueuePanel from "./component/QueuePanel.js"
 
 // Init client and components
 const mpdClient = new MpdClient()
 const favicon = new Favicon()
-const playerControl = new PlayerControl(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
+const playerPanel = new PlayerPanel(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
 const queuePanel = new QueuePanel(mpdClient, notify, errorHandler)
 const mediaSession = new MediaSession(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
 
@@ -57,13 +57,13 @@ function errorHandler (err) {
 
 async function refreshCurrentSong () {
   const data = await mpdClient.currentSong().catch(errorHandler)
-  playerControl.updateCurrentSong(data)
+  playerPanel.updateCurrentSong(data)
   mediaSession.updateCurrentSong(data)
 }
 
 async function refreshStatus () {
   const data = await mpdClient.status().catch(errorHandler)
-  playerControl.updateStatus(data)
+  playerPanel.updateStatus(data)
   mediaSession.updateStatus(data)
   queuePanel.updateStatus(data)
 
