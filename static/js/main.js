@@ -1,12 +1,12 @@
-import Favicon from "./favicon.js"
+import Favicon from "./component/Favicon.js"
 import MpdClient from "./mpd-client.js"
+import PlayerControl from "./component/PlayerControl.js"
 import sortable from "./html5sortable.es.min.js"
 
-// Create MPD client
+// Init client and components
 const mpdClient = new MpdClient()
-
-// Create favicon
 const favicon = new Favicon()
+const playerControl = new PlayerControl(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
 
 // Pagination
 let queuePage = 0
@@ -58,16 +58,7 @@ function errorHandler (err) {
 
 async function refreshCurrentSong () {
   const data = await mpdClient.currentSong().catch(errorHandler)
-  document.getElementById("currenttrack").textContent = data.Title || data.Name || data.file
-  document.getElementById("currenttrack").title = data.file
-  document.getElementById("album").textContent = data.Album || "Unknown"
-  document.getElementById("artist").textContent = data.Artist || "Unknown"
-
-  // If track is remote, show download button
-  const remotePattern = /^https?:\/\//i
-  const btnDownload = document.getElementById("btn-download")
-  btnDownload.classList.toggle("hide", !remotePattern.test(data.file))
-  btnDownload.href = data.file
+  playerControl.updateCurrentSong(data)
 
   // Update media session
   if ("mediaSession" in navigator) {
@@ -81,41 +72,14 @@ async function refreshCurrentSong () {
 
 async function refreshStatus () {
   const data = await mpdClient.status().catch(errorHandler)
+  playerControl.updateStatus(data)
 
-  // Update play/pause buttons
-  document.getElementById("btn-set-play").classList.toggle("hide", data.state === "play")
-  document.getElementById("btn-set-pause").classList.toggle("hide", data.state !== "play")
+  // Update favicon
   if (data.state === "play") {
     favicon.updateIcon("▶️")
   } else {
     favicon.updateIcon("⏸️")
   }
-
-  // Update progress bar
-  if (data.elapsed !== undefined && data.duration !== undefined) {
-    document.getElementById("progress-bar").value = data.elapsed
-    document.getElementById("progress-bar").max = data.duration
-  } else {
-    document.getElementById("progress-bar").value = 0
-  }
-
-  // Update progress counter
-  let elapsed = "-"
-  let duration = "-"
-  if (data.elapsed !== undefined) {
-    elapsed = new Date(data.elapsed * 1000).toISOString().substr(14, 5)
-  }
-  if (data.duration !== undefined) {
-    duration = new Date(data.duration * 1000).toISOString().substr(14, 5)
-  }
-  document.getElementById("counter").textContent = `${elapsed} / ${duration}`
-
-  // Update playback settings
-  document.getElementById("btn-toggle-random").classList.toggle("active", data.random)
-  document.getElementById("btn-toggle-repeat").classList.toggle("active", data.repeat)
-  document.getElementById("btn-toggle-consume").classList.toggle("active", data.consume)
-  document.getElementById("btn-toggle-single").classList.toggle("active", data.single)
-  document.getElementById("btn-toggle-crossfade").classList.toggle("active", data.xfade > 0)
 
   // Style active song in bold in playlist
   const oldActive = document.getElementById("playlist").dataset.activeSong
@@ -223,50 +187,6 @@ async function refreshQueue () {
 }
 
 // Register events
-document.getElementById("progress-bar").addEventListener("input", (e) => {
-  mpdClient.seekCursor(e.target.value).then(refreshStatus).catch(errorHandler)
-})
-document.getElementById("btn-set-prev").addEventListener("click", (e) => {
-  mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-set-play").addEventListener("click", (e) => {
-  mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-set-pause").addEventListener("click", (e) => {
-  mpdClient.pause(1).then(refreshStatus).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-set-next").addEventListener("click", (e) => {
-  mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-toggle-random").addEventListener("click", (e) => {
-  const active = e.target.classList.contains("active")
-  mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-toggle-repeat").addEventListener("click", (e) => {
-  const active = e.target.classList.contains("active")
-  mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-toggle-consume").addEventListener("click", (e) => {
-  const active = e.target.classList.contains("active")
-  mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-toggle-single").addEventListener("click", (e) => {
-  const active = e.target.classList.contains("active")
-  mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
-  e.preventDefault()
-})
-document.getElementById("btn-toggle-crossfade").addEventListener("click", (e) => {
-  const state = e.target.classList.contains("active")
-  mpdClient.setCrossfade(state ? 0 : 3).then(refreshStatus).catch(errorHandler)
-  e.preventDefault()
-})
 document.getElementById("btn-add-stream").addEventListener("click", (e) => {
   const uri = prompt("Stream URL")
   if (uri) {
@@ -309,10 +229,6 @@ document.getElementById("btn-next-page").addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.target.tagName !== "INPUT") {
     switch (e.key) {
-    case " ":
-      mpdClient.pause().then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
-      break
     case "f":
       if (e.ctrlKey) {
         document.getElementById("filter-queue").focus()
