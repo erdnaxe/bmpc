@@ -64,9 +64,18 @@ export default class PlayerPanel {
    * @param {Object} data Current song returned by MPD
    */
   updateCurrentSong (data) {
+    // Format track and disk
+    let trackDisk = ""
+    if (data.Disc && data.Track) {
+      trackDisk = `Disc ${data.Disc}, track ${data.Track}`
+    } else if (data.Track) {
+      trackDisk = `Track ${data.Track}`
+    }
+
     // Update text elements
-    document.getElementById("currenttrack").textContent = data.Title || data.Name || data.file
-    document.getElementById("currenttrack").title = data.file
+    document.getElementById("title").textContent = data.Title || data.Name || data.file
+    document.getElementById("title").title = data.file
+    document.getElementById("track-disk").textContent = trackDisk
     document.getElementById("album").textContent = data.Album || "Unknown"
     document.getElementById("artist").textContent = data.Artist || "Unknown"
   
