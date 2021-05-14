@@ -47,6 +47,9 @@ export default class PlayerPanel {
       mpdClient.setCrossfade(state ? 0 : 3).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
+    document.getElementById("volume-slider").addEventListener("input", (e) => {
+      mpdClient.setVolume(e.target.value).then(refreshStatus).catch(errorHandler)
+    })
     document.addEventListener("keydown", (e) => {
       if (e.target.tagName !== "INPUT") {
         switch (e.key) {
@@ -117,6 +120,10 @@ export default class PlayerPanel {
       duration = new Date(data.duration * 1000).toISOString().substr(14, 5)
     }
     document.getElementById("counter").textContent = `${elapsed} / ${duration}`
+
+    // Update volume slider
+    document.getElementById("btn-volume").classList.toggle("hide", data.volume === undefined)
+    document.getElementById("volume-slider").value = data.volume || 100
 
     // Update playback settings
     document.getElementById("btn-toggle-random").classList.toggle("active", data.random)
