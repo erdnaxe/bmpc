@@ -64,6 +64,10 @@ export default class PlayerPanel {
    * @param {Object} data Current song returned by MPD
    */
   updateCurrentSong (data) {
+    if (document.getElementById("title").title === data.file) {
+      return  // Already up to date
+    }
+
     // Format track and disk
     let trackDisk = ""
     if (data.Disc && data.Track) {
