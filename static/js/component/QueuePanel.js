@@ -50,13 +50,11 @@ export default class QueuePanel {
     })
     document.getElementById("btn-previous-page").addEventListener("click", (e) => {
       this.queuePage--
-      history.pushState({ queuePage: this.queuePage }, "")
       this.refreshQueue()
       e.preventDefault()
     })
     document.getElementById("btn-next-page").addEventListener("click", (e) => {
       this.queuePage++
-      history.pushState({ queuePage: this.queuePage }, "")
       this.refreshQueue()
       e.preventDefault()
     })
@@ -80,21 +78,14 @@ export default class QueuePanel {
           break
         case "ArrowLeft":
           if (this.queuePage > 0) {
-            if (e.shiftKey) {
-              this.queuePage = 0
-            } else {
-              this.queuePage--
-            }
-            history.pushState({ queuePage: this.queuePage }, "")
+            this.queuePage--
             this.refreshQueue()
             e.preventDefault()
           }
           break
         case "ArrowRight":
-          // TODO: get track count in playlist and implement Shift+RightArrow
           if (this.tableBody.childElementCount >= this.songsPerPage) {
             this.queuePage++
-            history.pushState({ queuePage: this.queuePage }, "")
             this.refreshQueue()
             e.preventDefault()
           }
@@ -102,15 +93,6 @@ export default class QueuePanel {
         }
       }
     })
-
-    // Configure history
-    window.onpopstate = (event) => {
-      // Queue page history
-      if (event.state.queuePage && event.state.queuePage !== this.queuePage) {
-        this.queuePage = event.state.queuePage
-        this.refreshQueue()
-      }
-    }
   }
 
   /**
