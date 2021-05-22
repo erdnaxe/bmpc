@@ -2,6 +2,8 @@
 
 export default class PlayerPanel {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
+    this.songLength = 100 // in seconds, default to maximum of range element
+
     // Register events
     document.getElementById("progress-bar").addEventListener("input", (e) => {
       mpdClient.seekCursor(e.target.value).then(refreshStatus).catch(errorHandler)
@@ -51,10 +53,51 @@ export default class PlayerPanel {
       mpdClient.setVolume(e.target.value).then(refreshStatus).catch(errorHandler)
     })
     document.addEventListener("keydown", (e) => {
+      // Play pause using space bar and numpad seeking
       if (e.target.tagName !== "INPUT") {
         switch (e.key) {
         case " ":
           mpdClient.pause().then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "0":
+          mpdClient.seekCursor(0).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "1":
+          mpdClient.seekCursor(this.songLength * 0.1).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "2":
+          mpdClient.seekCursor(this.songLength * 0.2).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "3":
+          mpdClient.seekCursor(this.songLength * 0.3).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "4":
+          mpdClient.seekCursor(this.songLength * 0.4).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "5":
+          mpdClient.seekCursor(this.songLength * 0.5).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "6":
+          mpdClient.seekCursor(this.songLength * 0.6).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "7":
+          mpdClient.seekCursor(this.songLength * 0.7).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "8":
+          mpdClient.seekCursor(this.songLength * 0.8).then(refreshStatus).catch(errorHandler)
+          e.preventDefault()
+          break
+        case "9":
+          mpdClient.seekCursor(this.songLength * 0.9).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
         }
@@ -85,12 +128,12 @@ export default class PlayerPanel {
     document.getElementById("track-disk").textContent = trackDisk
     document.getElementById("album").textContent = data.Album || "Unknown"
     document.getElementById("artist").textContent = data.Artist || "Unknown"
-  
+
     // If track is remote, show download button
     const remotePattern = /^https?:\/\//i
     const btnDownload = document.getElementById("btn-download")
     btnDownload.classList.toggle("hide", !remotePattern.test(data.file))
-    btnDownload.href = data.file  
+    btnDownload.href = data.file
   }
 
   /**
@@ -106,6 +149,7 @@ export default class PlayerPanel {
     if (data.elapsed !== undefined && data.duration !== undefined) {
       document.getElementById("progress-bar").max = data.duration
       document.getElementById("progress-bar").value = data.elapsed
+      this.songLength = data.duration
     } else {
       document.getElementById("progress-bar").value = 0
     }
