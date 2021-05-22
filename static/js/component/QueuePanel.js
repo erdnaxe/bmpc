@@ -1,7 +1,7 @@
 "use strict"
 
 export default class QueuePanel {
-  constructor (mpdClient, notify, errorHandler) {
+  constructor (mpdClient, refreshStatus, refreshCurrentSong, notify, errorHandler) {
     this.mpdClient = mpdClient
     this.errorHandler = errorHandler
     this.tableBody = document.querySelector("#playlist > tbody")
@@ -12,12 +12,12 @@ export default class QueuePanel {
 
     // Define event callbacks
     this.gotPlay = (event) =>  {
-      this.mpdClient.play(event.currentTarget.dataset.trackId).then(this.refreshStatus)
-        .then(this.refreshCurrentSong).catch(this.errorHandler)
+      this.mpdClient.play(event.currentTarget.dataset.trackId).then(refreshStatus)
+        .then(refreshCurrentSong).catch(this.errorHandler)
     }
     this.gotRemove = (event) => {
       const row = event.currentTarget.parentNode
-      this.mpdClient.delete(row.dataset.trackId).then(() => this.refreshQueue).then(this.refreshStatus).catch(this.errorHandler)
+      this.mpdClient.delete(row.dataset.trackId).then(() => this.refreshQueue).then(refreshStatus).catch(this.errorHandler)
     }
 
     // Register events

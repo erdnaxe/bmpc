@@ -10,7 +10,7 @@ import QueuePanel from "./component/QueuePanel.js"
 const mpdClient = new MpdClient()
 const favicon = new Favicon()
 const playerPanel = new PlayerPanel(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
-const queuePanel = new QueuePanel(mpdClient, notify, errorHandler)
+const queuePanel = new QueuePanel(mpdClient, refreshStatus, refreshCurrentSong, notify, errorHandler)
 const mediaSession = new MediaSession(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
 
 // Notification system
