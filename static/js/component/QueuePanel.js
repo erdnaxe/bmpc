@@ -17,19 +17,19 @@ export default class QueuePanel {
     }
     this.gotRemove = (event) => {
       const row = event.currentTarget.parentNode
-      this.mpdClient.delete(row.dataset.trackId).then(() => this.refreshQueue).then(refreshStatus).catch(this.errorHandler)
+      this.mpdClient.delete(row.dataset.trackId).then(() => this.refreshQueue()).then(refreshStatus).catch(this.errorHandler)
     }
 
     // Register events
     document.getElementById("btn-add-stream").addEventListener("click", (e) => {
       const uri = prompt("Stream URL")
       if (uri) {
-        mpdClient.add(uri).then(() => this.refreshQueue).catch(errorHandler)
+        mpdClient.add(uri).then(() => this.refreshQueue()).catch(errorHandler)
       }
       e.preventDefault()
     })
     document.getElementById("btn-rm-all").addEventListener("click", (e) => {
-      mpdClient.clear().then(() => this.refreshQueue).catch(errorHandler)
+      mpdClient.clear().then(() => this.refreshQueue()).then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
       e.preventDefault()
     })
     document.getElementById("btn-save-queue").addEventListener("click", (e) => {
