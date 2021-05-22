@@ -77,20 +77,27 @@ async function refreshStatus () {
   }
 }
 
+function periodicRefresh () {
+  if (document.visibilityState === "visible") {
+    // TODO: Use `idle` feature from MPD.
+    refreshStatus()
+    setTimeout(periodicRefresh, 1000)
+  } else {
+    // Wait for focus to save resources when running in background
+    document.addEventListener("visibilitychange", periodicRefresh, { once: true })
+  }
+}
+
 mpdClient.onClose = () => {
   notify("Connection to server lost, retrying in 3 seconds")
   setTimeout(() => mpdClient.connect(), 3000)
 }
 
 mpdClient.connect().then(() => {
-  // Automatically refresh
-  // These are useful when another MPD client is changing state.
-  // When tab is not focused, the browser will slow down these.
-  // TODO: Use `idle` feature from MPD.
-  setInterval(() => {
-    refreshCurrentSong().then(refreshStatus).then(() => queuePanel.refreshQueue())
-  }, 1000)
-
-  // Initial refresh
-  refreshCurrentSong().then(refreshStatus).then(() => queuePanel.refreshQueue())
+  // Initial refresh then set up periodic refresh
+  refreshCurrentSong().then(refreshStatus).then(() => {
+    queuePanel.refreshQueue()
+  }).then(() => {
+    periodicRefresh()
+  })
 }).catch(errorHandler)
