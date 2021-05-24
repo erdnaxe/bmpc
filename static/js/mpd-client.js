@@ -316,10 +316,13 @@ export default class MpdClient {
 
   /**
    * Searches case-insensitively for partial matches in the queue.
+   * Search is escaped, see
+   * <https://mpd.readthedocs.io/en/stable/protocol.html#escaping-string-values>
    * @param {String} filter Filter for searching, see
    * <https://www.musicpd.org/doc/html/protocol.html#filters>.
    */
   async playlistSearch (filter) {
+    filter = filter.replace(/[^\w\d() ]/g, '\\$&') // Escape special characters
     const data = await this.send(`playlistsearch "${filter}"\n`)
     return this.songListParser(data)
   }

@@ -120,11 +120,12 @@ export default class QueuePanel {
    * Refresh queue
    */
   async refreshQueue () {
-    const filter = document.getElementById('filter-queue').value
+    let filter = document.getElementById('filter-queue').value
     let data = []
     if (filter.length > 2) {
       // Get filtered queue
-      data = await this.mpdClient.playlistSearch(`(any contains '${filter}')`).catch(this.errorHandler)
+      filter = filter.replace(/[^\w\d() ]/g, '\\$&') // Escape
+      data = await this.mpdClient.playlistSearch(`(any contains "${filter}")`).catch(this.errorHandler)
       if (!data) {
         return
       }
