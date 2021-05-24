@@ -1,102 +1,102 @@
-"use strict"
+'use strict'
 
 export default class PlayerPanel {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
     this.songLength = 100 // in seconds, default to maximum of range element
 
     // Register events
-    document.getElementById("progress-bar").addEventListener("input", (e) => {
+    document.getElementById('progress-bar').addEventListener('input', (e) => {
       mpdClient.seekCursor(e.target.value).then(refreshStatus).catch(errorHandler)
     })
-    document.getElementById("btn-set-prev").addEventListener("click", (e) => {
+    document.getElementById('btn-set-prev').addEventListener('click', (e) => {
       mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-set-play").addEventListener("click", (e) => {
+    document.getElementById('btn-set-play').addEventListener('click', (e) => {
       mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-set-pause").addEventListener("click", (e) => {
+    document.getElementById('btn-set-pause').addEventListener('click', (e) => {
       mpdClient.pause(1).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-set-next").addEventListener("click", (e) => {
+    document.getElementById('btn-set-next').addEventListener('click', (e) => {
       mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-toggle-random").addEventListener("click", (e) => {
-      const active = e.target.classList.contains("active")
+    document.getElementById('btn-toggle-random').addEventListener('click', (e) => {
+      const active = e.target.classList.contains('active')
       mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-toggle-repeat").addEventListener("click", (e) => {
-      const active = e.target.classList.contains("active")
+    document.getElementById('btn-toggle-repeat').addEventListener('click', (e) => {
+      const active = e.target.classList.contains('active')
       mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-toggle-consume").addEventListener("click", (e) => {
-      const active = e.target.classList.contains("active")
+    document.getElementById('btn-toggle-consume').addEventListener('click', (e) => {
+      const active = e.target.classList.contains('active')
       mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-toggle-single").addEventListener("click", (e) => {
-      const active = e.target.classList.contains("active")
+    document.getElementById('btn-toggle-single').addEventListener('click', (e) => {
+      const active = e.target.classList.contains('active')
       mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-toggle-crossfade").addEventListener("click", (e) => {
-      const state = e.target.classList.contains("active")
+    document.getElementById('btn-toggle-crossfade').addEventListener('click', (e) => {
+      const state = e.target.classList.contains('active')
       mpdClient.setCrossfade(state ? 0 : 3).then(refreshStatus).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("volume-slider").addEventListener("input", (e) => {
+    document.getElementById('volume-slider').addEventListener('input', (e) => {
       mpdClient.setVolume(e.target.value).then(refreshStatus).catch(errorHandler)
     })
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener('keydown', (e) => {
       // Play pause using space bar and numpad seeking
-      if (e.target.tagName !== "INPUT") {
+      if (e.target.tagName !== 'INPUT') {
         switch (e.key) {
-        case " ":
+        case ' ':
           mpdClient.pause().then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "0":
+        case '0':
           mpdClient.seekCursor(0).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "1":
+        case '1':
           mpdClient.seekCursor(this.songLength * 0.1).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "2":
+        case '2':
           mpdClient.seekCursor(this.songLength * 0.2).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "3":
+        case '3':
           mpdClient.seekCursor(this.songLength * 0.3).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "4":
+        case '4':
           mpdClient.seekCursor(this.songLength * 0.4).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "5":
+        case '5':
           mpdClient.seekCursor(this.songLength * 0.5).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "6":
+        case '6':
           mpdClient.seekCursor(this.songLength * 0.6).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "7":
+        case '7':
           mpdClient.seekCursor(this.songLength * 0.7).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "8":
+        case '8':
           mpdClient.seekCursor(this.songLength * 0.8).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
-        case "9":
+        case '9':
           mpdClient.seekCursor(this.songLength * 0.9).then(refreshStatus).catch(errorHandler)
           e.preventDefault()
           break
@@ -110,12 +110,12 @@ export default class PlayerPanel {
    * @param {Object} data Current song returned by MPD
    */
   updateCurrentSong (data) {
-    if (document.getElementById("title").title === data.file) {
+    if (document.getElementById('title').title === data.file) {
       return  // Already up to date
     }
 
     // Format track and disk
-    let trackDisk = ""
+    let trackDisk = ''
     if (data.Disc && data.Track) {
       trackDisk = `Disc ${data.Disc}, track ${data.Track}`
     } else if (data.Track) {
@@ -123,16 +123,16 @@ export default class PlayerPanel {
     }
 
     // Update text elements
-    document.getElementById("title").textContent = data.Title || data.Name || data.file
-    document.getElementById("title").title = data.file
-    document.getElementById("track-disk").textContent = trackDisk
-    document.getElementById("album").textContent = data.Album || "Unknown"
-    document.getElementById("artist").textContent = data.Artist || "Unknown"
+    document.getElementById('title').textContent = data.Title || data.Name || data.file
+    document.getElementById('title').title = data.file
+    document.getElementById('track-disk').textContent = trackDisk
+    document.getElementById('album').textContent = data.Album || 'Unknown'
+    document.getElementById('artist').textContent = data.Artist || 'Unknown'
 
     // If track is remote, show download button
     const remotePattern = /^https?:\/\//i
-    const btnDownload = document.getElementById("btn-download")
-    btnDownload.classList.toggle("hide", !remotePattern.test(data.file))
+    const btnDownload = document.getElementById('btn-download')
+    btnDownload.classList.toggle('hide', !remotePattern.test(data.file))
     btnDownload.href = data.file
   }
 
@@ -142,38 +142,38 @@ export default class PlayerPanel {
    */
   updateStatus (data) {
     // Update play/pause buttons
-    document.getElementById("btn-set-play").classList.toggle("hide", data.state === "play")
-    document.getElementById("btn-set-pause").classList.toggle("hide", data.state !== "play")
+    document.getElementById('btn-set-play').classList.toggle('hide', data.state === 'play')
+    document.getElementById('btn-set-pause').classList.toggle('hide', data.state !== 'play')
 
     // Update progress bar
     if (data.elapsed !== undefined && data.duration !== undefined) {
-      document.getElementById("progress-bar").max = data.duration
-      document.getElementById("progress-bar").value = data.elapsed
+      document.getElementById('progress-bar').max = data.duration
+      document.getElementById('progress-bar').value = data.elapsed
       this.songLength = data.duration
     } else {
-      document.getElementById("progress-bar").value = 0
+      document.getElementById('progress-bar').value = 0
     }
 
     // Update progress counter
-    let elapsed = "-"
-    let duration = "-"
+    let elapsed = '-'
+    let duration = '-'
     if (data.elapsed !== undefined) {
       elapsed = new Date(data.elapsed * 1000).toISOString().substr(14, 5)
     }
     if (data.duration !== undefined) {
       duration = new Date(data.duration * 1000).toISOString().substr(14, 5)
     }
-    document.getElementById("counter").textContent = `${elapsed} / ${duration}`
+    document.getElementById('counter').textContent = `${elapsed} / ${duration}`
 
     // Update volume slider
-    document.getElementById("btn-volume").classList.toggle("hide", data.volume === undefined)
-    document.getElementById("volume-slider").value = data.volume || 100
+    document.getElementById('btn-volume').classList.toggle('hide', data.volume === undefined)
+    document.getElementById('volume-slider').value = data.volume || 100
 
     // Update playback settings
-    document.getElementById("btn-toggle-random").classList.toggle("active", data.random)
-    document.getElementById("btn-toggle-repeat").classList.toggle("active", data.repeat)
-    document.getElementById("btn-toggle-consume").classList.toggle("active", data.consume)
-    document.getElementById("btn-toggle-single").classList.toggle("active", data.single)
-    document.getElementById("btn-toggle-crossfade").classList.toggle("active", data.xfade > 0)
+    document.getElementById('btn-toggle-random').classList.toggle('active', data.random)
+    document.getElementById('btn-toggle-repeat').classList.toggle('active', data.repeat)
+    document.getElementById('btn-toggle-consume').classList.toggle('active', data.consume)
+    document.getElementById('btn-toggle-single').classList.toggle('active', data.single)
+    document.getElementById('btn-toggle-crossfade').classList.toggle('active', data.xfade > 0)
   }
 }

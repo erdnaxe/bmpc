@@ -1,10 +1,10 @@
-"use strict"
+'use strict'
 
 export default class QueuePanel {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, notify, errorHandler) {
     this.mpdClient = mpdClient
     this.errorHandler = errorHandler
-    this.tableBody = document.querySelector("#playlist > tbody")
+    this.tableBody = document.querySelector('#playlist > tbody')
 
     // Pagination
     this.queuePage = 0
@@ -21,69 +21,69 @@ export default class QueuePanel {
     }
 
     // Register events
-    document.getElementById("btn-add-stream").addEventListener("click", (e) => {
-      const uri = prompt("Stream URL")
+    document.getElementById('btn-add-stream').addEventListener('click', (e) => {
+      const uri = prompt('Stream URL')
       if (uri) {
         mpdClient.add(uri).then(() => this.refreshQueue()).catch(errorHandler)
       }
       e.preventDefault()
     })
-    document.getElementById("btn-rm-all").addEventListener("click", (e) => {
+    document.getElementById('btn-rm-all').addEventListener('click', (e) => {
       mpdClient.clear().then(() => this.refreshQueue()).then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("btn-save-queue").addEventListener("click", (e) => {
-      const name = prompt("New playlist name")
+    document.getElementById('btn-save-queue').addEventListener('click', (e) => {
+      const name = prompt('New playlist name')
       if (name) {
         mpdClient.save(name).catch(errorHandler)
       }
       e.preventDefault()
     })
-    document.getElementById("btn-update-database").addEventListener("click", (e) => {
+    document.getElementById('btn-update-database').addEventListener('click', (e) => {
       mpdClient.update().then(() => {
-        notify("Updating MPD database")
+        notify('Updating MPD database')
       }).catch(errorHandler)
       e.preventDefault()
     })
-    document.getElementById("filter-queue").addEventListener("input", () => {
+    document.getElementById('filter-queue').addEventListener('input', () => {
       this.refreshQueue()
     })
-    document.getElementById("btn-previous-page").addEventListener("click", (e) => {
+    document.getElementById('btn-previous-page').addEventListener('click', (e) => {
       this.queuePage--
       this.refreshQueue()
       e.preventDefault()
     })
-    document.getElementById("btn-next-page").addEventListener("click", (e) => {
+    document.getElementById('btn-next-page').addEventListener('click', (e) => {
       this.queuePage++
       this.refreshQueue()
       e.preventDefault()
     })
-    document.addEventListener("keydown", (e) => {
-      if (e.target.tagName !== "INPUT") {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName !== 'INPUT') {
         switch (e.key) {
-        case "f":
+        case 'f':
           if (e.ctrlKey) {
-            document.getElementById("filter-queue").focus()
+            document.getElementById('filter-queue').focus()
             e.preventDefault()
           }
           break
-        case "s":
+        case 's':
           if (e.ctrlKey) {
-            const name = prompt("New playlist name")
+            const name = prompt('New playlist name')
             if (name) {
               mpdClient.save(name).catch(errorHandler)
             }
             e.preventDefault()
           }
           break
-        case "ArrowLeft":
+        case 'ArrowLeft':
           if (this.queuePage > 0) {
             this.queuePage--
             this.refreshQueue()
             e.preventDefault()
           }
           break
-        case "ArrowRight":
+        case 'ArrowRight':
           if (this.tableBody.childElementCount >= this.songsPerPage) {
             this.queuePage++
             this.refreshQueue()
@@ -101,26 +101,26 @@ export default class QueuePanel {
    */
   updateStatus (data) {
     // Style active song in bold in playlist
-    const oldActive = document.getElementById("playlist").dataset.activeSong
-    document.getElementById("playlist").dataset.activeSong = data.song
+    const oldActive = document.getElementById('playlist').dataset.activeSong
+    document.getElementById('playlist').dataset.activeSong = data.song
     if (oldActive) {
       document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${oldActive}"]`).forEach((el) => {
-        el.classList.remove("active")
+        el.classList.remove('active')
       })
     }
     document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${data.song}"]`).forEach((el) => {
-      el.classList.add("active")
+      el.classList.add('active')
     })
 
     // Keep update database button active until update ends
-    document.getElementById("btn-update-database").classList.toggle("active", data.updating_db || 0)
+    document.getElementById('btn-update-database').classList.toggle('active', data.updating_db || 0)
   }
 
   /**
    * Refresh queue
    */
   async refreshQueue () {
-    const filter = document.getElementById("filter-queue").value
+    const filter = document.getElementById('filter-queue').value
     let data = []
     if (filter.length > 2) {
       // Get filtered queue
@@ -142,56 +142,56 @@ export default class QueuePanel {
     while (this.tableBody.firstChild) {
       if (this.tableBody.lastChild instanceof HTMLTableRowElement) {
         // Clear events before removing for garbage collection
-        this.tableBody.lastChild.removeEventListener("click", this.gotPlay)
-        this.tableBody.lastChild.lastChild.removeEventListener("click", this.gotRemove)
+        this.tableBody.lastChild.removeEventListener('click', this.gotPlay)
+        this.tableBody.lastChild.lastChild.removeEventListener('click', this.gotRemove)
       }
       this.tableBody.removeChild(this.tableBody.lastChild)
     }
 
     // Fill table with playlist
-    const activeSong = document.getElementById("playlist").dataset.activeSong
+    const activeSong = document.getElementById('playlist').dataset.activeSong
     for (const song of data) {
       // Format metadata
-      let time = "-"
+      let time = '-'
       if (song.Time !== undefined) {
         time = new Date(song.Time * 1000).toISOString().substr(14, 5)
       }
-      let trackDescription = ""
+      let trackDescription = ''
       if (song.Disc && song.Track) {
         trackDescription = `Disc ${song.Disc}, track ${song.Track}`
       } else if (song.Track) {
         trackDescription = `Track ${song.Track}`
       }
-      let albumDescription = `${song.Album || ""}`
+      let albumDescription = `${song.Album || ''}`
       if (song.Date) {
         const year = new Date(song.Date).getFullYear()
         albumDescription += ` (${year})`
       }
 
       // Create table row
-      const row = document.createElement("tr")
+      const row = document.createElement('tr')
       row.dataset.trackId = song.Pos
       row.innerHTML = `<td>${parseInt(song.Pos) + 1}</td>` +
-      `<td>${song.Artist || ""}<i>${albumDescription}</i></td>` +
+      `<td>${song.Artist || ''}<i>${albumDescription}</i></td>` +
       `<td>${song.Title || song.Name || song.file}<i>${trackDescription}</i></td><td>${time}</td>`
       row.title = song.file
-      const removeTd = document.createElement("td")
-      removeTd.innerHTML = "✕"
+      const removeTd = document.createElement('td')
+      removeTd.innerHTML = '✕'
       row.appendChild(removeTd)
       this.tableBody.appendChild(row)
       if (song.Pos === activeSong) {
-        row.classList.add("active") // Style current song
+        row.classList.add('active') // Style current song
       }
 
       // Remove track on remove button click
-      removeTd.addEventListener("click", this.gotRemove)
+      removeTd.addEventListener('click', this.gotRemove)
 
       // On click, jump to track
-      row.addEventListener("click", this.gotPlay)
+      row.addEventListener('click', this.gotPlay)
     }
 
     // Show pagination
-    document.getElementById("btn-previous-page").classList.toggle("hide", this.queuePage <= 0)
-    document.getElementById("btn-next-page").classList.toggle("hide", data.length < this.songsPerPage)
+    document.getElementById('btn-previous-page').classList.toggle('hide', this.queuePage <= 0)
+    document.getElementById('btn-next-page').classList.toggle('hide', data.length < this.songsPerPage)
   }
 }

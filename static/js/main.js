@@ -1,10 +1,10 @@
-"use strict"
+'use strict'
 
-import Favicon from "./component/Favicon.js"
-import MediaSession from "./component/MediaSession.js"
-import MpdClient from "./mpd-client.js"
-import PlayerPanel from "./component/PlayerPanel.js"
-import QueuePanel from "./component/QueuePanel.js"
+import Favicon from './component/Favicon.js'
+import MediaSession from './component/MediaSession.js'
+import MpdClient from './mpd-client.js'
+import PlayerPanel from './component/PlayerPanel.js'
+import QueuePanel from './component/QueuePanel.js'
 
 // Init client and components
 const mpdClient = new MpdClient()
@@ -15,9 +15,9 @@ const mediaSession = new MediaSession(mpdClient, refreshStatus, refreshCurrentSo
 
 // Notification system
 function notify (text) {
-  const notification = document.createElement("div")
+  const notification = document.createElement('div')
   notification.textContent = text
-  notification.classList.add("notification")
+  notification.classList.add('notification')
   document.body.appendChild(notification)
   setTimeout(() => {
     document.body.removeChild(notification)
@@ -26,20 +26,20 @@ function notify (text) {
 
 // Login prompt shown when user has not enough privileges
 function loginPrompt () {
-  if (document.getElementById("login-prompt")) {
+  if (document.getElementById('login-prompt')) {
     return // Already exist
   }
-  const loginBox = document.createElement("div")
-  loginBox.id = "login-prompt"
-  loginBox.textContent = "Please enter password: "
-  loginBox.classList.add("notification")
-  const passwordInput = document.createElement("input")
-  passwordInput.type = "password"
-  passwordInput.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") {
+  const loginBox = document.createElement('div')
+  loginBox.id = 'login-prompt'
+  loginBox.textContent = 'Please enter password: '
+  loginBox.classList.add('notification')
+  const passwordInput = document.createElement('input')
+  passwordInput.type = 'password'
+  passwordInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
       document.body.removeChild(loginBox)
       mpdClient.password(passwordInput.value).then(() => {
-        notify("Successfully logged in.")
+        notify('Successfully logged in.')
       }).catch(errorHandler)
     }
   })
@@ -70,26 +70,26 @@ async function refreshStatus () {
   queuePanel.updateStatus(data)
 
   // Update favicon
-  if (data.state === "play") {
-    favicon.updateIcon("▶️")
+  if (data.state === 'play') {
+    favicon.updateIcon('▶️')
   } else {
-    favicon.updateIcon("⏸️")
+    favicon.updateIcon('⏸️')
   }
 }
 
 function periodicRefresh () {
-  if (document.visibilityState === "visible") {
+  if (document.visibilityState === 'visible') {
     // TODO: Use `idle` feature from MPD.
     refreshStatus()
     setTimeout(periodicRefresh, 1000)
   } else {
     // Wait for focus to save resources when running in background
-    document.addEventListener("visibilitychange", periodicRefresh, { once: true })
+    document.addEventListener('visibilitychange', periodicRefresh, { once: true })
   }
 }
 
 mpdClient.onClose = () => {
-  notify("Connection to server lost, retrying in 3 seconds")
+  notify('Connection to server lost, retrying in 3 seconds')
   setTimeout(() => mpdClient.connect(), 3000)
 }
 

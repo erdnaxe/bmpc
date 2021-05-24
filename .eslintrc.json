@@ -18,7 +18,8 @@
         ],
         "quotes": [
             "error",
-            "double"
+            "single",
+            { "avoidEscape": true, "allowTemplateLiterals": false }
         ],
         "semi": [
             "error",
@@ -26,6 +27,7 @@
         ],
         "no-console": 1,
         "no-extra-parens": 2,
+        "no-trailing-spaces": "error",
         "arrow-parens": 2,
         "require-atomic-updates": 2,
         "eqeqeq": [

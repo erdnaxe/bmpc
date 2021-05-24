@@ -1,47 +1,47 @@
-"use strict"
+'use strict'
 
 export default class MediaSession {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
     // Configure media session actions
-    if ("mediaSession" in navigator) {
+    if ('mediaSession' in navigator) {
       // Play blank audio to take audio focus and allow media control
       // Wait for first interaction to bypass autoplay protection
-      document.addEventListener("click", () => {
-        const audio = new Audio("/blank.ogg")
+      document.addEventListener('click', () => {
+        const audio = new Audio('/blank.ogg')
         audio.loop = false
         audio.play()
       }, { once: true })
 
-      navigator.mediaSession.setActionHandler("play", () => {
+      navigator.mediaSession.setActionHandler('play', () => {
         mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
       })
-      navigator.mediaSession.setActionHandler("pause", () => {
+      navigator.mediaSession.setActionHandler('pause', () => {
         mpdClient.pause(1).then(refreshStatus).catch(errorHandler)
       })
-      navigator.mediaSession.setActionHandler("stop", () => {
+      navigator.mediaSession.setActionHandler('stop', () => {
         mpdClient.stop().then(refreshStatus).catch(errorHandler)
       })
-      navigator.mediaSession.setActionHandler("seekbackward", (e) => {
+      navigator.mediaSession.setActionHandler('seekbackward', (e) => {
         if (e.seekOffset) {
           mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
         } else {
-          mpdClient.seekCursor("-5").then(refreshStatus).catch(errorHandler)
+          mpdClient.seekCursor('-5').then(refreshStatus).catch(errorHandler)
         }
       })
-      navigator.mediaSession.setActionHandler("seekforward", (e) => {
+      navigator.mediaSession.setActionHandler('seekforward', (e) => {
         if (e.seekOffset) {
           mpdClient.seekCursor(e.seekOffset).then(refreshStatus).catch(errorHandler)
         } else {
-          mpdClient.seekCursor("+5").then(refreshStatus).catch(errorHandler)
+          mpdClient.seekCursor('+5').then(refreshStatus).catch(errorHandler)
         }
       })
-      navigator.mediaSession.setActionHandler("seekto", (e) => {
+      navigator.mediaSession.setActionHandler('seekto', (e) => {
         mpdClient.seekCursor(e.seekTime).then(refreshStatus).catch(errorHandler)
       })
-      navigator.mediaSession.setActionHandler("previoustrack", () => {
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
         mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
       })
-      navigator.mediaSession.setActionHandler("nexttrack", () => {
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
         mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
       })
     }
@@ -52,11 +52,11 @@ export default class MediaSession {
    * @param {Object} data Current song returned by MPD
    */
   updateCurrentSong (data) {
-    if ("mediaSession" in navigator) {
+    if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: data.Title || data.Name || data.file,
-        artist: data.Artist || "",
-        album: data.Album || ""
+        artist: data.Artist || '',
+        album: data.Album || ''
       })
     }
   }
@@ -66,8 +66,8 @@ export default class MediaSession {
    * @param {Object} data Status returned by MPD
    */
   updateStatus (data) {
-    if ("mediaSession" in navigator) {
-      navigator.mediaSession.playbackState = data.state === "play" ? "playing" : "paused"
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = data.state === 'play' ? 'playing' : 'paused'
     }
   }
 }
