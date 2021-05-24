@@ -4,7 +4,7 @@ export default class QueuePanel {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, notify, errorHandler) {
     this.mpdClient = mpdClient
     this.errorHandler = errorHandler
-    this.tableBody = document.querySelector('#playlist > tbody')
+    this.queueElement = document.getElementById('queue')
 
     // Pagination
     this.queuePage = 0
@@ -13,11 +13,11 @@ export default class QueuePanel {
     // Define event callbacks
     this.gotPlay = (event) => {
       this.mpdClient.play(event.currentTarget.dataset.trackId).then(refreshStatus)
-        .then(refreshCurrentSong).catch(this.errorHandler)
+        .then(refreshCurrentSong).catch(errorHandler)
     }
     this.gotRemove = (event) => {
       const row = event.currentTarget.parentNode
-      this.mpdClient.delete(row.dataset.trackId).then(() => this.refreshQueue()).then(refreshStatus).catch(this.errorHandler)
+      this.mpdClient.delete(row.dataset.trackId).then(() => this.refreshQueue()).then(refreshStatus).catch(errorHandler)
     }
 
     // Register events
@@ -84,7 +84,7 @@ export default class QueuePanel {
             }
             break
           case 'ArrowRight':
-            if (this.tableBody.childElementCount >= this.songsPerPage) {
+            if (this.queueElement.childElementCount >= this.songsPerPage) {
               this.queuePage++
               this.refreshQueue()
               e.preventDefault()
@@ -101,15 +101,12 @@ export default class QueuePanel {
    */
   updateStatus (data) {
     // Style active song in bold in playlist
-    const oldActive = document.getElementById('playlist').dataset.activeSong
-    document.getElementById('playlist').dataset.activeSong = data.song
-    if (oldActive) {
-      document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${oldActive}"]`).forEach((el) => {
-        el.classList.remove('active')
-      })
-    }
-    document.querySelectorAll(`#playlist > tbody > tr[data-track-id="${data.song}"]`).forEach((el) => {
-      el.classList.add('active')
+    this.queueElement.dataset.activeSong = data.song
+    const trackId = data.song.toString()
+    this.queueElement.childNodes.forEach((el) => {
+      if (el instanceof HTMLAnchorElement) {
+        el.classList.toggle('active', el.dataset.trackId === trackId)
+      }
     })
 
     // Keep update database button active until update ends
@@ -120,6 +117,7 @@ export default class QueuePanel {
    * Refresh queue
    */
   async refreshQueue () {
+    // Collect queue data
     let filter = document.getElementById('filter-queue').value
     let data = []
     if (filter.length > 2) {
@@ -139,56 +137,70 @@ export default class QueuePanel {
       data = await this.mpdClient.playlistInfo(start, end).catch(this.errorHandler)
     }
 
-    // Empty table body
-    while (this.tableBody.firstChild) {
-      if (this.tableBody.lastChild instanceof HTMLTableRowElement) {
+    // Empty queue except title
+    while (this.queueElement.lastChild && !(this.queueElement.lastChild instanceof HTMLDivElement)) {
+      if (this.queueElement.lastChild instanceof HTMLLinkElement) {
         // Clear events before removing for garbage collection
-        this.tableBody.lastChild.removeEventListener('click', this.gotPlay)
-        this.tableBody.lastChild.lastChild.removeEventListener('click', this.gotRemove)
+        this.queueElement.lastChild.removeEventListener('click', this.gotPlay)
+        this.queueElement.lastChild.lastChild.removeEventListener('click', this.gotRemove)
       }
-      this.tableBody.removeChild(this.tableBody.lastChild)
+      this.queueElement.removeChild(this.queueElement.lastChild)
     }
 
-    // Fill table with playlist
-    const activeSong = document.getElementById('playlist').dataset.activeSong
+    // Fill queue
     for (const song of data) {
-      // Format metadata
-      let time = '-'
-      if (song.Time !== undefined) {
-        time = new Date(song.Time * 1000).toISOString().substr(14, 5)
+      // Create table row
+      const item = document.createElement('a')
+      item.classList.add('queue-item')
+      item.href = `#${song.file}`
+      item.dataset.trackId = song.Pos
+
+      // Column: track number
+      const numberEl = document.createElement('div')
+      numberEl.textContent = parseInt(song.Pos) + 1
+      item.appendChild(numberEl)
+
+      // Column: artist, album
+      const artistEl = document.createElement('div')
+      let albumDescription = `${song.Album || ''}`
+      if (song.Date) {
+        const year = new Date(song.Date).getFullYear()
+        albumDescription += ` (${year})`
       }
+      artistEl.innerHTML = `${song.Artist || ''}<i>${albumDescription}</i>`
+      item.appendChild(artistEl)
+
+      // Column: track
+      const trackEl = document.createElement('div')
       let trackDescription = ''
       if (song.Disc && song.Track) {
         trackDescription = `Disc ${song.Disc}, track ${song.Track}`
       } else if (song.Track) {
         trackDescription = `Track ${song.Track}`
       }
-      let albumDescription = `${song.Album || ''}`
-      if (song.Date) {
-        const year = new Date(song.Date).getFullYear()
-        albumDescription += ` (${year})`
-      }
+      trackEl.innerHTML = `${song.Title || song.Name || song.file}<i>${trackDescription}</i>`
+      item.appendChild(trackEl)
 
-      // Create table row
-      const row = document.createElement('tr')
-      row.dataset.trackId = song.Pos
-      row.innerHTML = `<td>${parseInt(song.Pos) + 1}</td>` +
-      `<td>${song.Artist || ''}<i>${albumDescription}</i></td>` +
-      `<td>${song.Title || song.Name || song.file}<i>${trackDescription}</i></td><td>${time}</td>`
-      row.title = song.file
-      const removeTd = document.createElement('td')
-      removeTd.innerHTML = '✕'
-      row.appendChild(removeTd)
-      this.tableBody.appendChild(row)
-      if (song.Pos === activeSong) {
-        row.classList.add('active') // Style current song
+      // Column: duration
+      const durationEl = document.createElement('div')
+      durationEl.textContent = song.Time ? new Date(song.Time * 1000).toISOString().substr(14, 5) : '-'
+      item.appendChild(durationEl)
+
+      // Last column: remove element
+      const removeEl = document.createElement('div')
+      removeEl.innerHTML = '✕'
+      item.appendChild(removeEl)
+
+      this.queueElement.appendChild(item)
+      if (song.Pos === this.queueElement.dataset.activeSong) {
+        item.classList.add('active') // Style current song
       }
 
       // Remove track on remove button click
-      removeTd.addEventListener('click', this.gotRemove)
+      removeEl.addEventListener('click', this.gotRemove)
 
       // On click, jump to track
-      row.addEventListener('click', this.gotPlay)
+      item.addEventListener('click', this.gotPlay)
     }
 
     // Show pagination
