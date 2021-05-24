@@ -2,32 +2,14 @@ html {
   font-family: sans-serif;
 }
 body {
-  margin: 0;
-}
-
-/* Colors */
-body {
-  background: #d4d4d4;
-  color: #1f2424;
-}
-a {
-  color: #000;
-}
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #1f2424;
-    color: #d4d4d4;
-  }
-  a {
-    color: #fff;
-  }
+  /* Hide side borders on small screens */
+  margin: -1px;
 }
 
 /* Panels */
 .panel {
   margin: 2em auto;
   max-width: 1170px;
-  border: 1px dotted #a1a1a1;
 }
 .panel-body {
   padding: 1em;
@@ -44,7 +26,7 @@ input[type="range"] {
   display: block;
   width: 100%;
   appearance: none;
-  background: #777;
+  background: #6B7280;
   height: 0.5em;
 }
 
@@ -52,7 +34,6 @@ input[type="range"] {
 input[type="search"], input[type="password"] {
   background: inherit;
   color: inherit;
-  border: 1px dotted #a1a1a1;
   padding: 0.2em;
   width: 10em;
 }
@@ -66,11 +47,11 @@ td, th {
   text-align: left;
   padding: 8px;
   vertical-align: top;
-  border-top: 1px dotted #a1a1a1;
+  border-top: 1px dotted #6B7280;
   line-height: 1.2em;
 }
 tr:hover>td {
-  background: rgba(255, 255, 255, 0.1);
+  background: #6B72801a;
 }
 table i {
   display: block;
@@ -123,8 +104,6 @@ a svg, span.dropdown svg {
 .dropdown-content {
   display: none;
   position: absolute;
-  background: #1f2424;
-  border: 1px dotted #a1a1a1;
   min-width: 160px;
   padding: 0.5em;
   z-index: 1;
@@ -141,7 +120,6 @@ a svg, span.dropdown svg {
   left: 50%;
   transform: translateX(-50%);
   max-width: 1170px;
-  border: 1px dotted #a1a1a1;
   background-color: inherit;
   padding: 1em;
 }
@@ -152,4 +130,29 @@ a svg, span.dropdown svg {
 }
 .hide {
   display: none !important;
+}
+
+/* Colors */
+body, .dropdown-content {
+  background: #E5E7EB;
+  color: #1F2937;
+}
+a, button {
+  color: #111827;
+}
+@media (prefers-color-scheme: dark) {
+  body, .dropdown-content {
+    background: #1F2937;
+    color: #E5E7EB;
+  }
+  a, button {
+    color: #F3F4F6;
+  }
+}
+.panel, input[type="search"], input[type="password"], .dropdown-content,
+.notification {
+  border: 1px dotted #6B7280;
+}
+a:hover, button:hover, button.active {
+  color: #3B82F6;
 }
