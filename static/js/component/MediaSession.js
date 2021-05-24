@@ -5,9 +5,12 @@ export default class MediaSession {
     // Configure media session actions
     if ("mediaSession" in navigator) {
       // Play blank audio to take audio focus and allow media control
-      const audio = new Audio("/blank.ogg")
-      audio.loop = false
-      audio.play()
+      // Wait for first interaction to bypass autoplay protection
+      document.addEventListener("click", () => {
+        const audio = new Audio("/blank.ogg")
+        audio.loop = false
+        audio.play()
+      }, { once: true })
 
       navigator.mediaSession.setActionHandler("play", () => {
         mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
@@ -55,7 +58,7 @@ export default class MediaSession {
         artist: data.Artist || "",
         album: data.Album || ""
       })
-    }  
+    }
   }
 
   /**
