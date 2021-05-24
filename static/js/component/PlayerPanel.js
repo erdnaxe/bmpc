@@ -56,50 +56,50 @@ export default class PlayerPanel {
       // Play pause using space bar and numpad seeking
       if (e.target.tagName !== 'INPUT') {
         switch (e.key) {
-        case ' ':
-          mpdClient.pause().then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '0':
-          mpdClient.seekCursor(0).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '1':
-          mpdClient.seekCursor(this.songLength * 0.1).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '2':
-          mpdClient.seekCursor(this.songLength * 0.2).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '3':
-          mpdClient.seekCursor(this.songLength * 0.3).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '4':
-          mpdClient.seekCursor(this.songLength * 0.4).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '5':
-          mpdClient.seekCursor(this.songLength * 0.5).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '6':
-          mpdClient.seekCursor(this.songLength * 0.6).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '7':
-          mpdClient.seekCursor(this.songLength * 0.7).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '8':
-          mpdClient.seekCursor(this.songLength * 0.8).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
-        case '9':
-          mpdClient.seekCursor(this.songLength * 0.9).then(refreshStatus).catch(errorHandler)
-          e.preventDefault()
-          break
+          case ' ':
+            mpdClient.pause().then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '0':
+            mpdClient.seekCursor(0).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '1':
+            mpdClient.seekCursor(this.songLength * 0.1).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '2':
+            mpdClient.seekCursor(this.songLength * 0.2).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '3':
+            mpdClient.seekCursor(this.songLength * 0.3).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '4':
+            mpdClient.seekCursor(this.songLength * 0.4).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '5':
+            mpdClient.seekCursor(this.songLength * 0.5).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '6':
+            mpdClient.seekCursor(this.songLength * 0.6).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '7':
+            mpdClient.seekCursor(this.songLength * 0.7).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '8':
+            mpdClient.seekCursor(this.songLength * 0.8).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '9':
+            mpdClient.seekCursor(this.songLength * 0.9).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
         }
       }
     })
@@ -111,7 +111,7 @@ export default class PlayerPanel {
    */
   updateCurrentSong (data) {
     if (document.getElementById('title').title === data.file) {
-      return  // Already up to date
+      return // Already up to date
     }
 
     // Format track and disk

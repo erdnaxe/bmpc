@@ -11,7 +11,7 @@ export default class QueuePanel {
     this.songsPerPage = 100
 
     // Define event callbacks
-    this.gotPlay = (event) =>  {
+    this.gotPlay = (event) => {
       this.mpdClient.play(event.currentTarget.dataset.trackId).then(refreshStatus)
         .then(refreshCurrentSong).catch(this.errorHandler)
     }
@@ -61,35 +61,35 @@ export default class QueuePanel {
     document.addEventListener('keydown', (e) => {
       if (e.target.tagName !== 'INPUT') {
         switch (e.key) {
-        case 'f':
-          if (e.ctrlKey) {
-            document.getElementById('filter-queue').focus()
-            e.preventDefault()
-          }
-          break
-        case 's':
-          if (e.ctrlKey) {
-            const name = prompt('New playlist name')
-            if (name) {
-              mpdClient.save(name).catch(errorHandler)
+          case 'f':
+            if (e.ctrlKey) {
+              document.getElementById('filter-queue').focus()
+              e.preventDefault()
             }
-            e.preventDefault()
-          }
-          break
-        case 'ArrowLeft':
-          if (this.queuePage > 0) {
-            this.queuePage--
-            this.refreshQueue()
-            e.preventDefault()
-          }
-          break
-        case 'ArrowRight':
-          if (this.tableBody.childElementCount >= this.songsPerPage) {
-            this.queuePage++
-            this.refreshQueue()
-            e.preventDefault()
-          }
-          break
+            break
+          case 's':
+            if (e.ctrlKey) {
+              const name = prompt('New playlist name')
+              if (name) {
+                mpdClient.save(name).catch(errorHandler)
+              }
+              e.preventDefault()
+            }
+            break
+          case 'ArrowLeft':
+            if (this.queuePage > 0) {
+              this.queuePage--
+              this.refreshQueue()
+              e.preventDefault()
+            }
+            break
+          case 'ArrowRight':
+            if (this.tableBody.childElementCount >= this.songsPerPage) {
+              this.queuePage++
+              this.refreshQueue()
+              e.preventDefault()
+            }
+            break
         }
       }
     })
