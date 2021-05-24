@@ -23,34 +23,34 @@
       <input id="progress-bar" type="range">
 
       <span class="btn-group">
-        <a href="#" id="btn-set-prev" title="Skip to previous track">
+        <button id="btn-set-prev" title="Skip to previous track">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-skip-backward"
             viewBox="0 0 16 16">
             <path
               d="M.5 3.5A.5.5 0 0 1 1 4v3.248l6.267-3.636c.52-.302 1.233.043 1.233.696v2.94l6.267-3.636c.52-.302 1.233.043 1.233.696v7.384c0 .653-.713.998-1.233.696L8.5 8.752v2.94c0 .653-.713.998-1.233.696L1 8.752V12a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm7 1.133L1.696 8 7.5 11.367V4.633zm7.5 0L9.196 8 15 11.367V4.633z" />
           </svg>
-        </a>
-        <a href="#" id="btn-set-play" title="Start playback (Space)">
+        </button>
+        <button id="btn-set-play" title="Start playback (Space)">
           <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
             class="bi bi-play" viewBox="0 0 16 16">
             <path
               d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
           </svg>
-        </a>
-        <a href="#" id="btn-set-pause" title="Pause playback (Space)" class="hide">
+        </button>
+        <button id="btn-set-pause" title="Pause playback (Space)" class="hide">
           <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
             class="bi bi-pause" viewBox="0 0 16 16">
             <path
               d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z" />
           </svg>
-        </a>
-        <a href="#" id="btn-set-next" title="Skip to next track">
+        </button>
+        <button id="btn-set-next" title="Skip to next track">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-skip-forward"
             viewBox="0 0 16 16">
             <path
               d="M15.5 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V8.752l-6.267 3.636c-.52.302-1.233-.043-1.233-.696v-2.94l-6.267 3.636C.713 12.69 0 12.345 0 11.692V4.308c0-.653.713-.998 1.233-.696L7.5 7.248v-2.94c0-.653.713-.998 1.233-.696L15 7.248V4a.5.5 0 0 1 .5-.5zM1 4.633v6.734L6.804 8 1 4.633zm7.5 0v6.734L14.304 8 8.5 4.633z" />
           </svg>
-        </a>
+        </button>
       </span>
 
       <span class="btn-group pull-right">
@@ -64,7 +64,7 @@
           </svg>
           Download
         </a>
-        <a href="#" id="btn-toggle-random">
+        <button id="btn-toggle-random">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shuffle"
             viewBox="0 0 16 16">
             <path fill-rule="evenodd"
@@ -73,8 +73,8 @@
               d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z" />
           </svg>
           Random
-        </a>
-        <a href="#" id="btn-toggle-repeat">
+        </button>
+        <button id="btn-toggle-repeat">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat"
             viewBox="0 0 16 16">
             <path
@@ -83,8 +83,8 @@
               d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
           </svg>
           Repeat
-        </a>
-        <a href="#" id="btn-toggle-consume">
+        </button>
+        <button id="btn-toggle-consume">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-x"
             viewBox="0 0 16 16">
             <path
@@ -93,16 +93,16 @@
               d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
           </svg>
           Consume
-        </a>
-        <a href="#" id="btn-toggle-single">
+        </button>
+        <button id="btn-toggle-single">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star"
             viewBox="0 0 16 16">
             <path
               d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
           </svg>
           Single
-        </a>
-        <a href="#" id="btn-toggle-crossfade">
+        </button>
+        <button id="btn-toggle-crossfade">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link"
             viewBox="0 0 16 16">
             <path
@@ -111,8 +111,8 @@
               d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6H9z" />
           </svg>
           Crossfade
-        </a>
-        <span href="#" class="dropdown" id="btn-volume">
+        </button>
+        <button class="dropdown" id="btn-volume">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-up"
             viewBox="0 0 16 16">
             <path
@@ -126,7 +126,7 @@
           <div class="dropdown-content">
             <input id="volume-slider" type="range">
           </div>
-        </a>
+        </button>
         <div id="btn-outputs-block"></div>
       </span>
     </div>

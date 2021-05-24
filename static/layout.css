@@ -81,29 +81,29 @@ tr.active {
   width: 1em;
 }
 
-/* Link */
-a, .dropdown {
+/* Link and buttons */
+a, a:hover {
   text-decoration: none;
 }
-a:hover, span.dropdown:hover {
-  color: #699ecc;
-  text-decoration: none;
-}
-a.active {
-  color: #699ecc;
+button.active {
   font-weight: bold;
 }
-a svg, span.dropdown svg {
+a svg, button svg {
   vertical-align: middle;
   width: 1em;
 }
-.btn-group a, .btn-group span.dropdown {
+button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1em;
+}
+.btn-group a, .btn-group button {
   padding: 5px;
   display: inline-block;
 }
 @media print {
-  .btn-group a, input, #playlist th:last-child, #playlist td:last-child,
-  .btn-group span.dropdown {
+  .btn-group button, input, #playlist th:last-child, #playlist td:last-child {
      display: none !important;
   }
 }
