@@ -61,6 +61,8 @@ async function refreshCurrentSong () {
   const data = await mpdClient.currentSong().catch(errorHandler)
   playerPanel.updateCurrentSong(data)
   mediaSession.updateCurrentSong(data)
+  document.title = `${data.Title || data.Name || data.file} — ` +
+    `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'} | bmpc`
 }
 
 async function refreshStatus () {
