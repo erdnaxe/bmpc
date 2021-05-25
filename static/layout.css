@@ -9,6 +9,7 @@ body {
 .panel {
   margin: 2em auto;
   max-width: 1170px;
+  background: #6b72800d;
 }
 .panel-body {
   padding: 1em;
@@ -56,10 +57,11 @@ input[type="search"], input[type="password"] {
   vertical-align: top;
   line-height: 1.2em;
   text-decoration: none;
+  background: #6b72800d;
   color: inherit;
 }
 .queue-item:hover, .queue-item:focus {
-  background: #6B72801a;
+  background: #6b72804d;
   color: inherit;
 }
 .queue-item > div, .queue-header > div {
