@@ -26,6 +26,14 @@ body {
   }
 }
 
+/* Footer */
+footer {
+  text-align: center;
+  font-size: 0.8em;
+  margin: 2em auto;
+  color: #6b7280;
+}
+
 /* Player format */
 .title {
   font-size: 2em;

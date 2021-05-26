@@ -62,7 +62,7 @@ async function refreshCurrentSong () {
   playerPanel.updateCurrentSong(data)
   mediaSession.updateCurrentSong(data)
   document.title = `${data.Title || data.Name || data.file} — ` +
-    `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'} | bmpc`
+    `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'}`
 }
 
 async function refreshStatus () {
