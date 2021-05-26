@@ -277,6 +277,29 @@ export default class MpdClient {
   }
 
   /**
+   * Sets the replay gain mode.
+   * This command triggers the `options` idle event.
+   * @param {String} mode Replay gain mode: `off`, `track`, `album` or `auto`.
+   */
+  replayGainMode (mode) {
+    return this.send(`replay_gain_mode ${mode}\n`)
+  }
+
+  /**
+   * Prints replay gain options.
+   */
+  async replayGainStatus () {
+    const data = await this.send('replay_gain_status\n')
+
+    // Parse status
+    const status = {}
+    for (const entry of data) {
+      status[entry[0]] = entry[1]
+    }
+    return status
+  }
+
+  /**
    * Plays next song in the playlist.
    */
   next () {

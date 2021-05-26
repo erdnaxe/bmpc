@@ -83,7 +83,7 @@ input[type="search"], input[type="password"] {
 a, a:hover {
   text-decoration: none;
 }
-button.active {
+a.active, button.active {
   font-weight: bold;
 }
 a svg, button svg {
@@ -159,9 +159,9 @@ a, button {
   }
 }
 .panel, input[type="search"], input[type="password"], .dropdown-content,
-.notification {
+.notification, hr {
   border: 1px dotted #6B7280;
 }
-a:hover, button:hover, button.active {
+a:hover, a.active, button:hover, button.active {
   color: #3B82F6;
 }

@@ -67,7 +67,8 @@ async function refreshCurrentSong () {
 
 async function refreshStatus () {
   const data = await mpdClient.status().catch(errorHandler)
-  playerPanel.updateStatus(data)
+  const replayGainData = await mpdClient.replayGainStatus().catch(errorHandler)
+  playerPanel.updateStatus(data, replayGainData)
   mediaSession.updateStatus(data)
   queuePanel.updateStatus(data)
 

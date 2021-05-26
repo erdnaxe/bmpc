@@ -57,6 +57,11 @@ export default class PlayerPanel {
     document.getElementById('volume-slider').addEventListener('input', (e) => {
       mpdClient.setVolume(e.target.value).then(refreshStatus).catch(errorHandler)
     })
+    document.getElementById('btn-replay-gain').addEventListener('click', (e) => {
+      const state = e.target.classList.contains('active')
+      mpdClient.replayGainMode(state ? 'off' : 'auto').then(refreshStatus).catch(errorHandler)
+      e.preventDefault()
+    })
     document.addEventListener('keydown', (e) => {
       // Play pause using space bar and numpad seeking
       if (e.target.tagName !== 'INPUT') {
@@ -144,8 +149,9 @@ export default class PlayerPanel {
   /**
    * Update element to reflect new status
    * @param {Object} data Status returned by MPD
+   * @param {Object} replayGainData Replay gain status returned by MPD
    */
-  updateStatus (data) {
+  updateStatus (data, replayGainData) {
     // Update play/pause buttons
     document.getElementById('btn-set-play').classList.toggle('hide', data.state === 'play')
     document.getElementById('btn-set-pause').classList.toggle('hide', data.state !== 'play')
@@ -180,6 +186,9 @@ export default class PlayerPanel {
     document.getElementById('btn-toggle-consume').classList.toggle('active', data.consume)
     document.getElementById('btn-toggle-single').classList.toggle('active', data.single)
     document.getElementById('btn-toggle-crossfade').classList.toggle('active', data.xfade > 0)
+
+    // Update replay gain mode
+    document.getElementById('btn-replay-gain').classList.toggle('active', replayGainData.replay_gain_mode !== 'off')
   }
 
   /**
