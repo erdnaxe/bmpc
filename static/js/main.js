@@ -81,7 +81,7 @@ async function refreshStatus () {
 
 function periodicRefresh () {
   if (document.visibilityState === 'visible') {
-    // TODO: Use `idle` feature from MPD.
+    // TODO: increment time without request to server
     refreshStatus()
     setTimeout(periodicRefresh, 1000)
   } else {
@@ -94,6 +94,9 @@ mpdClient.onClose = () => {
   notify('Connection to server lost, retrying in 3 seconds')
   setTimeout(() => mpdClient.connect(), 3000)
 }
+mpdClient.onQueue = () => queuePanel.refreshQueue()
+mpdClient.onStatus = () => refreshStatus()
+mpdClient.onCurrentSong = () => refreshCurrentSong()
 
 mpdClient.connect().then(() => {
   // Initial refresh then set up periodic refresh

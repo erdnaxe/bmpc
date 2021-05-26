@@ -1,12 +1,43 @@
 'use strict'
 
 /**
+ * MPD client
  * Implement https://www.musicpd.org/doc/html/protocol.html
+ * For idle mode, see https://docs.rs/mpd/0.0.12/mpd/idle/index.html
  */
 export default class MpdClient {
   constructor () {
     this.socket = null
-    this.onClose = null
+
+    // Events
+    this.onQueue = null
+    this.onStatus = null
+    this.onCurrentSong = null
+
+    // Dispatch idle events
+    this.idleMessageHandler = (e) => {
+      this.socket.onmessage = null // One shot event
+      this.idle()
+
+      // Parse response
+      // We match MPD subsystems with the command one need to send to get update
+      const pattern = /^\w+: (.+)$/gm
+      for (const match of e.data.matchAll(pattern)) {
+        switch (match[1]) {
+          case 'playlist':
+            this.onQueue()
+            break
+          case 'player':
+            this.onStatus().then(() => this.onCurrentSong())
+            break
+          case 'mixer':
+          case 'output':
+          case 'options':
+            this.onStatus()
+            break
+        }
+      }
+    }
   }
 
   /**
@@ -24,10 +55,9 @@ export default class MpdClient {
             return
           }
 
-          // Register onclose callback
+          // Register callbacks and enter idle mode
           this.socket.onclose = this.onClose
-
-          this.socket.onmessage = null
+          this.idle()
           resolve()
         }
       }
@@ -37,28 +67,19 @@ export default class MpdClient {
 
   /**
    * Send a request and return response as promise.
+   * Set connection to `idle` after request to receive events.
    * @param {String} request Request to send to MPD.
    */
   async send (request) {
+    await this.noIdle()
     return new Promise((resolve, reject) => {
-      if (!this.socket) {
-        reject(new Error('Not connected to server'))
-        return
-      }
-      if (this.socket.onmessage !== this.idleMessageHandler) {
-        return // Request already running
-      }
-
-      // Exit idle mode
-      //this.socket.send("noidle\n")
-
       // Set temporary callback to catch response
       let response = ''
       this.socket.onmessage = (e) => {
         response += e.data
 
         if (e.data.endsWith('OK\n')) {
-          this.socket.onmessage = null  // End of request
+          this.idle() // Restore idle mode
 
           // Parse response
           const data = []
@@ -71,15 +92,14 @@ export default class MpdClient {
         }
 
         if (e.data.startsWith('ACK ')) {
-          this.socket.onmessage = null  // End of request
+          this.idle() // Restore idle mode
 
           // Parse error
-          const pattern = /^ACK\s+\[.*\]\s+(\{.*)/
-          const error = response.match(pattern)[1]
+          const pattern_1 = /^ACK\s+\[.*\]\s+(\{.*)/
+          const error = response.match(pattern_1)[1]
           reject(new Error(`Server error: ${error}`))
         }
       }
-
       this.socket.send(request)
     })
   }
@@ -120,6 +140,53 @@ export default class MpdClient {
       }
     }
     return status
+  }
+
+  /**
+   * Enter idle mode.
+   * Connection enters idle state between each request.
+   */
+  idle () {
+    if (!this.socket) {
+      throw new Error('Not connected to server')
+    }
+
+    // Check we are not already idling
+    if (this.socket.onmessage === this.idleMessageHandler) {
+      return // Drop
+    }
+
+    // this.idleMessageHandler will be called when server will send an event
+    this.socket.onmessage = this.idleMessageHandler
+    this.socket.send('idle playlist player mixer output options\n')
+  }
+
+  /**
+   * Exit idle mode.
+   */
+  noIdle () {
+    return new Promise((resolve, reject) => {
+      if (!this.socket) {
+        reject(new Error('Not connected to server'))
+        return
+      }
+
+      // Check we are in idle mode
+      if (this.socket.onmessage !== this.idleMessageHandler) {
+        return // Request already running, drop
+      }
+
+      // Set temporary callback to catch response
+      this.socket.onmessage = (e) => {
+        if (e.data.endsWith('OK\n')) {
+          resolve()
+        } else {
+          reject(new Error('noidle failed'))
+        }
+      }
+
+      this.socket.send('noidle\n')
+    })
   }
 
   /**
