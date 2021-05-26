@@ -13,6 +13,7 @@ export default class MpdClient {
     this.onQueue = null
     this.onStatus = null
     this.onCurrentSong = null
+    this.onOutput = null
 
     // Dispatch idle events
     this.idleMessageHandler = (e) => {
@@ -30,8 +31,10 @@ export default class MpdClient {
           case 'player':
             this.onStatus().then(() => this.onCurrentSong())
             break
-          case 'mixer':
           case 'output':
+            this.onOutput()
+            break
+          case 'mixer':
           case 'options':
             this.onStatus()
             break
@@ -448,5 +451,39 @@ export default class MpdClient {
    */
   password (password) {
     return this.send(`password "${password}"\n`)
+  }
+
+  /**
+   * Turns an output on or off, depending on the current state.
+   * @param {Number} id Output identifier to toggle
+   */
+  toggleOutput (id) {
+    return this.send(`toggleoutput "${id}"\n`)
+  }
+
+  /**
+   * Shows information about all outputs.
+   * Return information:
+   *   outputid: ID of the output. May change between executions
+   *   outputname: Name of the output. It can be any.
+   *   outputenabled: Status of the output. 0 if disabled, 1 if enabled.
+   */
+  async outputs () {
+    const data = await this.send('outputs\n')
+
+    // Parse data
+    const outputList = []
+    for (const entry of data) {
+      // A new output always start with `outputid` entry
+      if (entry[0] === 'outputid') {
+        // New file section
+        outputList.push({})
+      }
+
+      if (outputList.length > 0) {
+        outputList[outputList.length - 1][entry[0]] = entry[1]
+      }
+    }
+    return outputList
   }
 }

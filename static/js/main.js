@@ -9,7 +9,7 @@ import QueuePanel from './component/QueuePanel.js'
 // Init client and components
 const mpdClient = new MpdClient()
 const favicon = new Favicon()
-const playerPanel = new PlayerPanel(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
+const playerPanel = new PlayerPanel(mpdClient, refreshStatus, refreshCurrentSong, refreshOutput, errorHandler)
 const queuePanel = new QueuePanel(mpdClient, refreshStatus, refreshCurrentSong, notify, errorHandler)
 const mediaSession = new MediaSession(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
 
@@ -79,6 +79,11 @@ async function refreshStatus () {
   }
 }
 
+async function refreshOutput () {
+  const data = await mpdClient.outputs().catch(errorHandler)
+  playerPanel.updateOutput(data)
+}
+
 function periodicRefresh () {
   if (document.visibilityState === 'visible') {
     // TODO: increment time without request to server
@@ -97,10 +102,11 @@ mpdClient.onClose = () => {
 mpdClient.onQueue = () => queuePanel.refreshQueue()
 mpdClient.onStatus = () => refreshStatus()
 mpdClient.onCurrentSong = () => refreshCurrentSong()
+mpdClient.onOutput = () => refreshOutput()
 
 mpdClient.connect().then(() => {
   // Initial refresh then set up periodic refresh
-  refreshCurrentSong().then(refreshStatus).then(() => {
+  refreshCurrentSong().then(refreshStatus).then(refreshOutput).then(() => {
     queuePanel.refreshQueue()
   }).then(() => {
     periodicRefresh()

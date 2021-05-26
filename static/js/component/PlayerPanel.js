@@ -1,8 +1,13 @@
 'use strict'
 
 export default class PlayerPanel {
-  constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
+  constructor (mpdClient, refreshStatus, refreshCurrentSong, refreshOutput, errorHandler) {
     this.songLength = 100 // in seconds, default to maximum of range element
+
+    // Event called for output buttons
+    this.toggleOutput = (e) => {
+      mpdClient.toggleOutput(e.target.dataset.outputId).then(refreshOutput)
+    }
 
     // Register events
     document.getElementById('progress-bar').addEventListener('input', (e) => {
@@ -167,7 +172,7 @@ export default class PlayerPanel {
 
     // Update volume slider
     document.getElementById('btn-volume').classList.toggle('hide', data.volume === undefined)
-    document.getElementById('volume-slider').value = data.volume || 100
+    document.getElementById('volume-slider').value = data.volume === undefined ? 100 : data.volume
 
     // Update playback settings
     document.getElementById('btn-toggle-random').classList.toggle('active', data.random)
@@ -175,5 +180,29 @@ export default class PlayerPanel {
     document.getElementById('btn-toggle-consume').classList.toggle('active', data.consume)
     document.getElementById('btn-toggle-single').classList.toggle('active', data.single)
     document.getElementById('btn-toggle-crossfade').classList.toggle('active', data.xfade > 0)
+  }
+
+  /**
+   * Update element to reflect new output state
+   * @param {Object} data Outputs returned by MPD
+   */
+  updateOutput (data) {
+    const outputElement = document.getElementById('output-group')
+
+    // Empty output group
+    while (outputElement.lastChild) {
+      outputElement.lastChild.removeEventListener('click', this.toggleOutput)
+      outputElement.removeChild(outputElement.lastChild)
+    }
+
+    // Build output elements and append
+    for (const output of data) {
+      const buttonEl = document.createElement('button')
+      buttonEl.textContent = output.outputname || `Output ${output.outputid}`
+      buttonEl.dataset.outputId = output.outputid
+      buttonEl.addEventListener('click', this.toggleOutput)
+      buttonEl.classList.toggle('active', output.outputenabled === '1')
+      outputElement.appendChild(buttonEl)
+    }
   }
 }
