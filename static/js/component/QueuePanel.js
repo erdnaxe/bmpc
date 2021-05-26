@@ -101,8 +101,8 @@ export default class QueuePanel {
    */
   updateStatus (data) {
     // Style active song in bold in playlist
-    this.queueElement.dataset.activeSong = data.song
-    const trackId = data.song.toString()
+    this.queueElement.dataset.activeSong = data.song === undefined ? -1 : data.song
+    const trackId = this.queueElement.dataset.activeSong.toString()
     this.queueElement.childNodes.forEach((el) => {
       if (el instanceof HTMLAnchorElement) {
         el.classList.toggle('active', el.dataset.trackId === trackId)
