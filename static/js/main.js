@@ -63,6 +63,7 @@ async function refreshCurrentSong () {
   mediaSession.updateCurrentSong(data)
   document.title = `${data.Title || data.Name || data.file} — ` +
     `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'}`
+  window.location.hash = `#${data.Pos}`
 }
 
 async function refreshStatus () {
@@ -95,6 +96,14 @@ function periodicRefresh () {
     document.addEventListener('visibilitychange', periodicRefresh, { once: true })
   }
 }
+
+// When URL changes, change song
+window.addEventListener('hashchange', () => {
+  const songPos = window.location.hash.substr(1)
+  if (!isNaN(songPos)) {
+    mpdClient.play(songPos).then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
+  }
+})
 
 mpdClient.onClose = () => {
   notify('Connection to server lost, retrying in 3 seconds')

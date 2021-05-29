@@ -11,13 +11,9 @@ export default class QueuePanel {
     this.songsPerPage = 100
 
     // Define event callbacks
-    this.gotPlay = (event) => {
-      this.mpdClient.play(event.currentTarget.dataset.trackId).then(refreshStatus)
-        .then(refreshCurrentSong).catch(errorHandler)
-    }
     this.gotRemove = (event) => {
       const row = event.currentTarget.parentNode
-      this.mpdClient.delete(row.dataset.trackId).then(() => this.refreshQueue()).then(refreshStatus).catch(errorHandler)
+      this.mpdClient.delete(row.dataset.trackPos).then(() => this.refreshQueue()).then(refreshStatus).catch(errorHandler)
     }
 
     // Register events
@@ -102,10 +98,10 @@ export default class QueuePanel {
   updateStatus (data) {
     // Style active song in bold in playlist
     this.queueElement.dataset.activeSong = data.song === undefined ? -1 : data.song
-    const trackId = this.queueElement.dataset.activeSong.toString()
+    const trackPos = this.queueElement.dataset.activeSong.toString()
     this.queueElement.childNodes.forEach((el) => {
       if (el instanceof HTMLAnchorElement) {
-        el.classList.toggle('active', el.dataset.trackId === trackId)
+        el.classList.toggle('active', el.dataset.trackPos === trackPos)
       }
     })
 
@@ -141,7 +137,6 @@ export default class QueuePanel {
     while (this.queueElement.lastChild && !(this.queueElement.lastChild instanceof HTMLDivElement)) {
       if (this.queueElement.lastChild instanceof HTMLLinkElement) {
         // Clear events before removing for garbage collection
-        this.queueElement.lastChild.removeEventListener('click', this.gotPlay)
         this.queueElement.lastChild.lastChild.removeEventListener('click', this.gotRemove)
       }
       this.queueElement.removeChild(this.queueElement.lastChild)
@@ -152,8 +147,9 @@ export default class QueuePanel {
       // Create table row
       const item = document.createElement('a')
       item.classList.add('queue-item')
-      item.href = `#${song.file}`
-      item.dataset.trackId = song.Pos
+      item.href = `#${song.Pos}`
+      item.dataset.trackPos = song.Pos
+      item.title = song.file
 
       // Column: track number
       const numberEl = document.createElement('div')
@@ -198,9 +194,6 @@ export default class QueuePanel {
 
       // Remove track on remove button click
       removeEl.addEventListener('click', this.gotRemove)
-
-      // On click, jump to track
-      item.addEventListener('click', this.gotPlay)
     }
 
     // Show pagination
