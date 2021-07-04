@@ -8,7 +8,7 @@ export default class QueuePanel {
 
     // Pagination
     this.queuePage = 0
-    this.songsPerPage = 100
+    this.songsPerPage = 25
 
     // Define event callbacks
     this.gotRemove = (event) => {
