@@ -17,6 +17,11 @@ export default class QueuePanel {
     }
 
     // Register events
+    document.getElementById('btn-queue-collapse').addEventListener('click', (e) => {
+      document.getElementById('queue-control').classList.toggle('hide')
+      this.queueElement.classList.toggle('hide')
+      e.preventDefault()
+    })
     document.getElementById('btn-add-stream').addEventListener('click', (e) => {
       const uri = prompt('Stream URL')
       if (uri) {

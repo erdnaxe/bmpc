@@ -10,6 +10,16 @@ body {
   margin: 2em auto;
   max-width: 1170px;
   background: #6b72800d;
+  overflow: hidden;
+}
+.panel-collapse {
+  border-bottom: 1px dotted #6B7280;
+  background: #6b72800d;
+  height: 0.5rem;
+  cursor: n-resize;
+}
+.panel-collapse:hover {
+  background: #6b72801a;
 }
 .panel-body {
   padding: 1em;
