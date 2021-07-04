@@ -152,7 +152,7 @@ export default class QueuePanel {
       // Create table row
       const item = document.createElement('a')
       item.classList.add('queue-item')
-      item.href = `#${song.Pos}`
+      item.href = `#${song.Id}`
       item.dataset.trackPos = song.Pos
       item.title = song.file
 

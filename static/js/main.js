@@ -14,7 +14,7 @@ const queuePanel = new QueuePanel(mpdClient, refreshStatus, refreshCurrentSong, 
 const mediaSession = new MediaSession(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
 
 // Store current server song position for hashchange event
-let currentlyPlayingPos = ''
+let currentlyPlayingId = ''
 
 // Notification system
 function notify (text) {
@@ -66,8 +66,8 @@ async function refreshCurrentSong () {
   mediaSession.updateCurrentSong(data)
   document.title = `${data.Title || data.Name || data.file} — ` +
     `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'}`
-  currentlyPlayingPos = `${data.Pos}`
-  window.location.hash = `#${data.Pos}`
+  currentlyPlayingId = `${data.Id}`
+  window.location.hash = `#${data.Id}`
 }
 
 async function refreshStatus () {
@@ -103,9 +103,9 @@ function periodicRefresh () {
 
 // When URL changes, change song
 window.addEventListener('hashchange', () => {
-  const songPos = window.location.hash.substr(1)
-  if (!isNaN(songPos) && currentlyPlayingPos !== songPos) {
-    mpdClient.play(songPos).then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
+  const songId = window.location.hash.substr(1)
+  if (!isNaN(songId) && currentlyPlayingId !== songId) {
+    mpdClient.playId(songId).then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
   }
 })
 

@@ -320,10 +320,18 @@ export default class MpdClient {
 
   /**
    * Begins playing the playlist at song.
-   * @param {Number} songPos Identifier of the song to play.
+   * @param {Number} songPos Position of the song to play.
    */
   play (songPos) {
     return this.send(`play ${songPos}\n`)
+  }
+
+  /**
+   * Begins playing the playlist at song.
+   * @param {Number} songId Identifier of the song to play.
+   */
+  playId (songId) {
+    return this.send(`playid ${songId}\n`)
   }
 
   /**
