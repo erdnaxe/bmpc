@@ -111,7 +111,7 @@ window.addEventListener('hashchange', () => {
 
 mpdClient.onClose = () => {
   notify('Connection to server lost, retrying in 3 seconds')
-  setTimeout(() => mpdClient.connect(), 3000)
+  setTimeout(() => mpdClient.connect().catch(errorHandler), 3000)
 }
 mpdClient.onQueue = () => queuePanel.refreshQueue()
 mpdClient.onStatus = () => refreshStatus()

@@ -64,7 +64,9 @@ export default class MpdClient {
           resolve()
         }
       }
-      this.socket.onerror = (e) => reject(e)
+      this.socket.onerror = (e) => {
+        reject(new Error(`WebSocket error while connecting to ${e.target.url}`))
+      }
     })
   }
 
