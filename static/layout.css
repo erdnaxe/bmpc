@@ -12,7 +12,7 @@ body {
   background: #6b72800d;
 }
 .panel-collapse {
-  border-bottom: 1px dotted #6B7280;
+  border-bottom: 1px solid #6B728055;
   background: #6b72800d;
   height: 0.5rem;
   cursor: n-resize;
@@ -71,8 +71,7 @@ input[type="search"], input[type="password"] {
 .queue-item, .queue-header {
   display: grid;
   grid-template-columns: 1fr 1fr 6em;
-  border-top: 1px dotted #6B7280;
-  vertical-align: top;
+  border-top: 1px solid #6B728055;
   text-decoration: none;
   background: #6b72800d;
   color: inherit;
@@ -178,9 +177,9 @@ a, button {
     color: #F3F4F6;
   }
 }
-.panel, input[type="search"], input[type="password"], .dropdown-content,
+input[type="search"], input[type="password"], .dropdown-content,
 .notification, hr {
-  border: 1px dotted #6B7280;
+  border: 1px solid #6B728055;
 }
 a:hover, a.active, button:hover, button.active {
   color: #3B82F6;
