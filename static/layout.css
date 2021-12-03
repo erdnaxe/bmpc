@@ -72,7 +72,6 @@ input[type="search"], input[type="password"] {
   grid-template-columns: 1fr 1fr 6em;
   border-top: 1px dotted #6B7280;
   vertical-align: top;
-  line-height: 1.2em;
   text-decoration: none;
   background: #6b72800d;
   color: inherit;
@@ -82,14 +81,18 @@ input[type="search"], input[type="password"] {
   color: inherit;
 }
 .queue-item > div, .queue-header > div {
-  padding: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px 8px;
 }
 .queue-item > div:last-child, .queue-header > div:last-child {
   text-align: right;
 }
 .queue-item i {
   display: block;
-  font-size: 90%;
+  font-size: smaller;
+  opacity: 75%;
 }
 .queue-header, .queue-item.active {
   font-weight: bold;
