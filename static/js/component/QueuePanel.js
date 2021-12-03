@@ -12,7 +12,7 @@ export default class QueuePanel {
 
     // Define event callbacks
     this.gotRemove = (event) => {
-      const row = event.currentTarget.parentNode
+      const row = event.currentTarget.parentNode.parentNode
       this.mpdClient.delete(row.dataset.trackPos).then(() => this.refreshQueue()).then(refreshStatus).catch(errorHandler)
     }
 
@@ -156,11 +156,6 @@ export default class QueuePanel {
       item.dataset.trackPos = song.Pos
       item.title = song.file
 
-      // Column: track number
-      const numberEl = document.createElement('div')
-      numberEl.textContent = parseInt(song.Pos) + 1
-      item.appendChild(numberEl)
-
       // Column: artist, album
       const artistEl = document.createElement('div')
       let albumDescription = `${song.Album || ''}`
@@ -190,7 +185,7 @@ export default class QueuePanel {
       // Last column: remove element
       const removeEl = document.createElement('div')
       removeEl.innerHTML = '✕'
-      item.appendChild(removeEl)
+      durationEl.appendChild(removeEl)
 
       this.queueElement.appendChild(item)
       if (song.Pos === this.queueElement.dataset.activeSong) {
