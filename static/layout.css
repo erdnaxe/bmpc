@@ -11,15 +11,6 @@ body {
   max-width: 1170px;
   background: #6b72800d;
 }
-.panel-collapse {
-  border-bottom: 1px solid #6B728055;
-  background: #6b72800d;
-  height: 0.5rem;
-  cursor: n-resize;
-}
-.panel-collapse:hover {
-  background: #6b72801a;
-}
 .panel-body {
   padding: 0.7em;
 }
