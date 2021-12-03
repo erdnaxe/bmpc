@@ -21,7 +21,7 @@ body {
   background: #6b72801a;
 }
 .panel-body {
-  padding: 1em;
+  padding: 0.7em;
 }
 .panel-body::after {
   /* Clear floats */
@@ -84,7 +84,7 @@ input[type="search"], input[type="password"] {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 4px 8px;
+  padding: 4px 0.7em;
 }
 .queue-item > div:last-child, .queue-header > div:last-child {
   text-align: right;
