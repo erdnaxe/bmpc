@@ -64,10 +64,45 @@ export default class PlayerPanel {
     })
     document.addEventListener('keydown', (e) => {
       // Play pause using space bar and numpad seeking
-      if (e.target.tagName !== 'INPUT') {
+      if (e.target.tagName !== 'INPUT' && !e.ctrlKey) {
+        let active = false
         switch (e.key) {
+          case 'p':
           case ' ':
             mpdClient.pause().then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '<':
+            mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
+            e.preventDefault()
+            break
+          case '>':
+            mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
+            e.preventDefault()
+            break
+          case 'z':
+            active = document.getElementById('btn-toggle-random').classList.contains('active')
+            mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case 'r':
+            active = document.getElementById('btn-toggle-repeat').classList.contains('active')
+            mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case 'R':
+            active = document.getElementById('btn-toggle-consume').classList.contains('active')
+            mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case 'y':
+            active = document.getElementById('btn-toggle-single').classList.contains('active')
+            mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            break
+          case 'x':
+            active = document.getElementById('btn-toggle-crossfade').classList.contains('active')
+            mpdClient.setCrossfade(active ? 0 : 3).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             break
           case '0':

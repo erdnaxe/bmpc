@@ -23,28 +23,28 @@
       <input id="progress-bar" type="range">
 
       <span class="btn-group">
-        <button id="btn-set-prev" title="Skip to previous track">
+        <button id="btn-set-prev" title="Skip to previous track (&lt;)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-skip-backward"
             viewBox="0 0 16 16">
             <path
               d="M.5 3.5A.5.5 0 0 1 1 4v3.248l6.267-3.636c.52-.302 1.233.043 1.233.696v2.94l6.267-3.636c.52-.302 1.233.043 1.233.696v7.384c0 .653-.713.998-1.233.696L8.5 8.752v2.94c0 .653-.713.998-1.233.696L1 8.752V12a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm7 1.133L1.696 8 7.5 11.367V4.633zm7.5 0L9.196 8 15 11.367V4.633z" />
           </svg>
         </button>
-        <button id="btn-set-play" title="Start playback (Space)">
+        <button id="btn-set-play" title="Start playback (Space, P)">
           <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
             class="bi bi-play" viewBox="0 0 16 16">
             <path
               d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
           </svg>
         </button>
-        <button id="btn-set-pause" title="Pause playback (Space)" class="hide">
+        <button id="btn-set-pause" title="Pause playback (Space, P)" class="hide">
           <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
             class="bi bi-pause" viewBox="0 0 16 16">
             <path
               d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z" />
           </svg>
         </button>
-        <button id="btn-set-next" title="Skip to next track">
+        <button id="btn-set-next" title="Skip to next track (&gt;)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-skip-forward"
             viewBox="0 0 16 16">
             <path
@@ -64,7 +64,7 @@
           </svg>
           Download
         </a>
-        <button id="btn-toggle-random">
+        <button id="btn-toggle-random" title="Randomize playback order (Z)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shuffle"
             viewBox="0 0 16 16">
             <path fill-rule="evenodd"
@@ -74,7 +74,7 @@
           </svg>
           Random
         </button>
-        <button id="btn-toggle-repeat">
+        <button id="btn-toggle-repeat" title="Repeat the playlist after reaching the end (R)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat"
             viewBox="0 0 16 16">
             <path
@@ -84,7 +84,7 @@
           </svg>
           Repeat
         </button>
-        <button id="btn-toggle-consume">
+        <button id="btn-toggle-consume" title="Remove the current track from playlist after playback (Shift+R)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-x"
             viewBox="0 0 16 16">
             <path
@@ -94,7 +94,7 @@
           </svg>
           Consume
         </button>
-        <button id="btn-toggle-single">
+        <button id="btn-toggle-single" title="Only play a single track and then stop (Y)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star"
             viewBox="0 0 16 16">
             <path
@@ -102,7 +102,7 @@
           </svg>
           Single
         </button>
-        <button id="btn-toggle-crossfade">
+        <button id="btn-toggle-crossfade" title="Fade tracks transition (X)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link"
             viewBox="0 0 16 16">
             <path
