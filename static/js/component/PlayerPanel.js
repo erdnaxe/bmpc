@@ -64,87 +64,89 @@ export default class PlayerPanel {
     })
     document.addEventListener('keydown', (e) => {
       // Play pause using space bar and numpad seeking
-      if (e.target.tagName !== 'INPUT' && !e.ctrlKey) {
+      if (e.target.tagName !== 'INPUT' && !e.ctrlKey && !e.altKey) {
         let active = false
         switch (e.key) {
           case 'p':
           case ' ':
             mpdClient.pause().then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
+            return
           case '<':
             mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
             e.preventDefault()
-            break
+            return
           case '>':
             mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
             e.preventDefault()
-            break
+            return
           case 'z':
             active = document.getElementById('btn-toggle-random').classList.contains('active')
             mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
+            return
           case 'r':
             active = document.getElementById('btn-toggle-repeat').classList.contains('active')
             mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
+            return
           case 'R':
             active = document.getElementById('btn-toggle-consume').classList.contains('active')
             mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
+            return
           case 'y':
             active = document.getElementById('btn-toggle-single').classList.contains('active')
             mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
+            return
           case 'x':
             active = document.getElementById('btn-toggle-crossfade').classList.contains('active')
             mpdClient.setCrossfade(active ? 0 : 3).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '0':
+            return
+        }
+        switch (e.code) {
+          case 'Digit0':
             mpdClient.seekCursor(0).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '1':
+            return
+          case 'Digit1':
             mpdClient.seekCursor(this.songLength * 0.1).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '2':
+            return
+          case 'Digit2':
             mpdClient.seekCursor(this.songLength * 0.2).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '3':
+            return
+          case 'Digit3':
             mpdClient.seekCursor(this.songLength * 0.3).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '4':
+            return
+          case 'Digit4':
             mpdClient.seekCursor(this.songLength * 0.4).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '5':
+            return
+          case 'Digit5':
             mpdClient.seekCursor(this.songLength * 0.5).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '6':
+            return
+          case 'Digit6':
             mpdClient.seekCursor(this.songLength * 0.6).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '7':
+            return
+          case 'Digit7':
             mpdClient.seekCursor(this.songLength * 0.7).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '8':
+            return
+          case 'Digit8':
             mpdClient.seekCursor(this.songLength * 0.8).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
-          case '9':
+            return
+          case 'Digit9':
             mpdClient.seekCursor(this.songLength * 0.9).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            break
+            return
         }
       }
     })
