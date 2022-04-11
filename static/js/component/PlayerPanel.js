@@ -192,7 +192,12 @@ export default class PlayerPanel {
     document.getElementById('title').textContent = data.Title || data.Name || data.file
     document.getElementById('title').title = data.file
     document.getElementById('track-disk').textContent = trackDisk
-    document.getElementById('album').textContent = data.Album || 'Unknown'
+    let albumDescription = data.Album || 'Unknown'
+    if (data.Date) {
+      const year = new Date(data.Date).getFullYear()
+      albumDescription += ` (${year})`
+    }
+    document.getElementById('album').textContent = albumDescription
     document.getElementById('artist').textContent = data.Artist || 'Unknown'
 
     // If track is remote, show download button
