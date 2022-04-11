@@ -66,46 +66,7 @@ export default class PlayerPanel {
       // Play pause using space bar and numpad seeking
       if (e.target.tagName !== 'INPUT' && !e.ctrlKey && !e.altKey) {
         let active = false
-        switch (e.key) {
-          case 'p':
-          case ' ':
-            mpdClient.pause().then(refreshStatus).catch(errorHandler)
-            e.preventDefault()
-            return
-          case '<':
-            mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-            e.preventDefault()
-            return
-          case '>':
-            mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-            e.preventDefault()
-            return
-          case 'z':
-            active = document.getElementById('btn-toggle-random').classList.contains('active')
-            mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
-            e.preventDefault()
-            return
-          case 'r':
-            active = document.getElementById('btn-toggle-repeat').classList.contains('active')
-            mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
-            e.preventDefault()
-            return
-          case 'R':
-            active = document.getElementById('btn-toggle-consume').classList.contains('active')
-            mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
-            e.preventDefault()
-            return
-          case 'y':
-            active = document.getElementById('btn-toggle-single').classList.contains('active')
-            mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
-            e.preventDefault()
-            return
-          case 'x':
-            active = document.getElementById('btn-toggle-crossfade').classList.contains('active')
-            mpdClient.setCrossfade(active ? 0 : 3).then(refreshStatus).catch(errorHandler)
-            e.preventDefault()
-            return
-        }
+        let value = 0
         switch (e.code) {
           case 'Digit0':
             mpdClient.seekCursor(0).then(refreshStatus).catch(errorHandler)
@@ -145,6 +106,56 @@ export default class PlayerPanel {
             return
           case 'Digit9':
             mpdClient.seekCursor(this.songLength * 0.9).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+        }
+        switch (e.key) {
+          case 'p':
+          case ' ':
+            mpdClient.pause().then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case '<':
+            mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
+            e.preventDefault()
+            return
+          case '>':
+            mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
+            e.preventDefault()
+            return
+          case 'z':
+            active = document.getElementById('btn-toggle-random').classList.contains('active')
+            mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case 'r':
+            active = document.getElementById('btn-toggle-repeat').classList.contains('active')
+            mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case 'R':
+            active = document.getElementById('btn-toggle-consume').classList.contains('active')
+            mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case 'y':
+            active = document.getElementById('btn-toggle-single').classList.contains('active')
+            mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case 'x':
+            active = document.getElementById('btn-toggle-crossfade').classList.contains('active')
+            mpdClient.setCrossfade(active ? 0 : 3).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case '-':
+            value = Math.max(Number(document.getElementById('volume-slider').value) - 2, 0)
+            mpdClient.setVolume(value).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case '+':
+            value = Math.min(Number(document.getElementById('volume-slider').value) + 2, 100)
+            mpdClient.setVolume(value).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
         }
