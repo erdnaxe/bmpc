@@ -123,6 +123,14 @@ export default class PlayerPanel {
             mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
             e.preventDefault()
             return
+          case 'b':
+            mpdClient.seekCursor("-2").then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case 'f':
+            mpdClient.seekCursor("+2").then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
           case 'z':
             active = document.getElementById('btn-toggle-random').classList.contains('active')
             mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
