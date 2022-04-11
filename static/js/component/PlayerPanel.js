@@ -124,11 +124,11 @@ export default class PlayerPanel {
             e.preventDefault()
             return
           case 'b':
-            mpdClient.seekCursor("-2").then(refreshStatus).catch(errorHandler)
+            mpdClient.seekCursor('-2').then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'f':
-            mpdClient.seekCursor("+2").then(refreshStatus).catch(errorHandler)
+            mpdClient.seekCursor('+2').then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'z':
