@@ -57,9 +57,13 @@ export default class QueuePanel {
     document.addEventListener('keydown', (e) => {
       if (e.target.tagName !== 'INPUT') {
         switch (e.key) {
+          case '/':
+            document.getElementById('filter-queue').select()
+            e.preventDefault()
+            break
           case 'f':
             if (e.ctrlKey) {
-              document.getElementById('filter-queue').focus()
+              document.getElementById('filter-queue').select()
               e.preventDefault()
             }
             break
