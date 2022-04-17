@@ -69,42 +69,52 @@ export default class PlayerPanel {
         let value = 0
         switch (e.code) {
           case 'Digit0':
+          case 'Numpad0':
             mpdClient.seekCursor(0).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit1':
+          case 'Numpad1':
             mpdClient.seekCursor(this.songLength * 0.1).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit2':
+          case 'Numpad2':
             mpdClient.seekCursor(this.songLength * 0.2).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit3':
+          case 'Numpad3':
             mpdClient.seekCursor(this.songLength * 0.3).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit4':
+          case 'Numpad4':
             mpdClient.seekCursor(this.songLength * 0.4).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit5':
+          case 'Numpad5':
             mpdClient.seekCursor(this.songLength * 0.5).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit6':
+          case 'Numpad6':
             mpdClient.seekCursor(this.songLength * 0.6).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit7':
+          case 'Numpad7':
             mpdClient.seekCursor(this.songLength * 0.7).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit8':
+          case 'Numpad8':
             mpdClient.seekCursor(this.songLength * 0.8).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'Digit9':
+          case 'Numpad9':
             mpdClient.seekCursor(this.songLength * 0.9).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
