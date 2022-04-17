@@ -121,7 +121,7 @@ mpdClient.onOutput = () => refreshOutput()
 mpdClient.connect().then(() => {
   // Initial refresh then set up periodic refresh
   refreshCurrentSong().then(refreshStatus).then(refreshOutput).then(() => {
-    queuePanel.refreshQueue()
+    queuePanel.jumpToPlayingPage()
   }).then(() => {
     periodicRefresh()
   })

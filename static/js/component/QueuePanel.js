@@ -101,8 +101,8 @@ export default class QueuePanel {
    */
   updateStatus (data) {
     // Style active song in bold in playlist
-    this.queueElement.dataset.activeSong = data.song === undefined ? -1 : data.song
-    const trackPos = this.queueElement.dataset.activeSong.toString()
+    const trackPos = data.song !== undefined ? data.song.toString() : '-1'
+    this.queueElement.dataset.activeSong = trackPos
     this.queueElement.childNodes.forEach((el) => {
       if (el instanceof HTMLAnchorElement) {
         el.classList.toggle('active', el.dataset.trackPos === trackPos)
@@ -111,6 +111,18 @@ export default class QueuePanel {
 
     // Keep update database button active until update ends
     document.getElementById('btn-update-database').classList.toggle('active', data.updating_db || 0)
+  }
+
+  /**
+   * Jump to currently playing page
+   */
+  async jumpToPlayingPage () {
+    // Go to current page
+    const playingPage = Math.floor(this.queueElement.dataset.activeSong / this.songsPerPage)
+    if (playingPage >= 0) {
+      this.queuePage = playingPage
+      await this.refreshQueue()
+    }
   }
 
   /**
