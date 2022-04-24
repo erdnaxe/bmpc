@@ -17,14 +17,15 @@ export default class MpdClient {
     this.onOutput = null
 
     // Dispatch idle events
-    this.idleMessageHandler = (e) => {
+    this.idleMessageHandler = async (e) => {
       this.socket.onmessage = null // One shot event
       this.idle()
 
       // Parse response
       // We match MPD subsystems with the command one need to send to get update
+      const textMsg = await e.data.text()
       const pattern = /^\w+: (.+)$/gm
-      for (const match of e.data.matchAll(pattern)) {
+      for (const match of textMsg.matchAll(pattern)) {
         switch (match[1]) {
           case 'playlist':
             this.onQueue()
@@ -53,8 +54,9 @@ export default class MpdClient {
       this.socket = new WebSocket(`${protocol}//${location.host}/ws`)
       this.socket.onopen = () => {
         // Wait for OK from server
-        this.socket.onmessage = (msg) => {
-          if (!msg.data.startsWith('OK MPD ')) {
+        this.socket.onmessage = async (msg) => {
+          const textMsg = await msg.data.text()
+          if (!textMsg.startsWith('OK MPD ')) {
             reject(new Error('Bad return code from server'))
             return
           }
@@ -81,10 +83,11 @@ export default class MpdClient {
     return new Promise((resolve, reject) => {
       // Set temporary callback to catch response
       let response = ''
-      this.socket.onmessage = (e) => {
-        response += e.data
+      this.socket.onmessage = async (e) => {
+        const textMsg = await e.data.text()
+        response += textMsg
 
-        if (e.data.endsWith('OK\n')) {
+        if (textMsg.endsWith('OK\n')) {
           this.idle() // Restore idle mode
 
           // Parse response
@@ -97,7 +100,7 @@ export default class MpdClient {
           return
         }
 
-        if (e.data.startsWith('ACK ')) {
+        if (textMsg.startsWith('ACK ')) {
           this.idle() // Restore idle mode
 
           // Parse error
@@ -183,8 +186,9 @@ export default class MpdClient {
       }
 
       // Set temporary callback to catch response
-      this.socket.onmessage = (e) => {
-        if (e.data.endsWith('OK\n')) {
+      this.socket.onmessage = async (e) => {
+        const textMsg = await e.data.text()
+        if (textMsg.endsWith('OK\n')) {
           resolve()
         } else {
           reject(new Error('noidle failed'))
