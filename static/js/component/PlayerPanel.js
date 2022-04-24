@@ -175,7 +175,6 @@ export default class PlayerPanel {
             value = Math.min(Number(document.getElementById('volume-slider').value) + 2, 100)
             mpdClient.setVolume(value).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
-            return
         }
       }
     })
