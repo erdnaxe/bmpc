@@ -101,8 +101,8 @@ export default class MpdClient {
           this.idle() // Restore idle mode
 
           // Parse error
-          const pattern_1 = /^ACK\s+\[.*\]\s+(\{.*)/
-          const error = response.match(pattern_1)[1]
+          const pattern1 = /^ACK\s+\[.*\]\s+(\{.*)/
+          const error = response.match(pattern1)[1]
           reject(new Error(`Server error: ${error}`))
         }
       }
