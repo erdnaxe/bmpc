@@ -94,7 +94,13 @@ export default class MpdClient {
           const data = []
           const pattern = /^(\w+): (.+)$/gm
           for (const match of response.matchAll(pattern)) {
-            data.push([match[1], match[2]])
+            if (match[1] === 'binary') {
+              // Binary object is before OK
+              const binary = e.data.slice(-parseInt(match[2]) - 4, -4)
+              data.push([match[1], binary])
+            } else {
+              data.push([match[1], match[2]])
+            }
           }
           resolve(data)
           return
