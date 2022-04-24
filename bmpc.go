@@ -17,8 +17,28 @@ var mpdAddress string
 //go:embed static
 var staticFiles embed.FS
 
-func copyWorker(dst io.Writer, src io.Reader, done chan<- bool) {
-	io.Copy(dst, src)
+func mpdToWsCopyWorker(src io.Reader, dst *websocket.Conn, done chan<- bool) {
+	buf := make([]byte, 16*1024)
+	for {
+		// Use websocket.Message.Send to send as binary message
+		nr, err_read := src.Read(buf)
+		err_write := websocket.Message.Send(dst, buf[0:nr])
+		if err_read != nil || err_write != nil {
+			break
+		}
+	}
+	done <- true
+}
+
+func wsToMpdCopyWorker(src io.Reader, dst io.Writer, done chan<- bool) {
+	buf := make([]byte, 16*1024)
+	for {
+		nr, err_read := src.Read(buf)
+		_, err_write := dst.Write(buf[0:nr])
+		if err_read != nil || err_write != nil {
+			break
+		}
+	}
 	done <- true
 }
 
@@ -32,8 +52,8 @@ func relayHandler(ws *websocket.Conn) {
 
 	// Launch copy workers and wait for 2 done signals if exiting
 	done := make(chan bool)
-	go copyWorker(conn, ws, done)
-	go copyWorker(ws, conn, done)
+	go mpdToWsCopyWorker(conn, ws, done)
+	go wsToMpdCopyWorker(ws, conn, done)
 	<-done
 	conn.Close()
 	ws.Close()

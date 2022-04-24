@@ -1,5 +1,5 @@
 'use strict'
-/* global location, WebSocket */
+/* global Blob, location, WebSocket */
 
 /**
  * MPD client
@@ -17,14 +17,15 @@ export default class MpdClient {
     this.onOutput = null
 
     // Dispatch idle events
-    this.idleMessageHandler = (e) => {
+    this.idleMessageHandler = async (e) => {
       this.socket.onmessage = null // One shot event
       this.idle()
 
       // Parse response
       // We match MPD subsystems with the command one need to send to get update
+      const textMsg = await e.data.text()
       const pattern = /^\w+: (.+)$/gm
-      for (const match of e.data.matchAll(pattern)) {
+      for (const match of textMsg.matchAll(pattern)) {
         switch (match[1]) {
           case 'playlist':
             this.onQueue()
@@ -53,8 +54,9 @@ export default class MpdClient {
       this.socket = new WebSocket(`${protocol}//${location.host}/ws`)
       this.socket.onopen = () => {
         // Wait for OK from server
-        this.socket.onmessage = (msg) => {
-          if (!msg.data.startsWith('OK MPD ')) {
+        this.socket.onmessage = async (msg) => {
+          const textMsg = await msg.data.text()
+          if (!textMsg.startsWith('OK MPD ')) {
             reject(new Error('Bad return code from server'))
             return
           }
@@ -81,23 +83,30 @@ export default class MpdClient {
     return new Promise((resolve, reject) => {
       // Set temporary callback to catch response
       let response = ''
-      this.socket.onmessage = (e) => {
-        response += e.data
+      this.socket.onmessage = async (e) => {
+        const textMsg = await e.data.text()
+        response += textMsg
 
-        if (e.data.endsWith('OK\n')) {
+        if (textMsg.endsWith('OK\n')) {
           this.idle() // Restore idle mode
 
           // Parse response
           const data = []
           const pattern = /^(\w+): (.+)$/gm
           for (const match of response.matchAll(pattern)) {
-            data.push([match[1], match[2]])
+            if (match[1] === 'binary') {
+              // Binary object is before OK
+              const binary = e.data.slice(-parseInt(match[2]) - 4, -4)
+              data.push([match[1], binary])
+            } else {
+              data.push([match[1], match[2]])
+            }
           }
           resolve(data)
           return
         }
 
-        if (e.data.startsWith('ACK ')) {
+        if (textMsg.startsWith('ACK ')) {
           this.idle() // Restore idle mode
 
           // Parse error
@@ -131,21 +140,28 @@ export default class MpdClient {
   }
 
   /**
+   * Build an object representing the response
+   *
+   * Should be only use when there are no duplicated fields in response.
+   */
+  responseToObject (response) {
+    const obj = {}
+    for (const entry of response) {
+      if (isNaN(entry[1])) {
+        obj[entry[0]] = entry[1]
+      } else {
+        obj[entry[0]] = parseInt(entry[1])
+      }
+    }
+    return obj
+  }
+
+  /**
    * Reports the current status of the player and the volume level.
    */
   async currentSong () {
     const data = await this.send('currentsong\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      if (isNaN(entry[1])) {
-        status[entry[0]] = entry[1]
-      } else {
-        status[entry[0]] = parseInt(entry[1])
-      }
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
@@ -183,8 +199,9 @@ export default class MpdClient {
       }
 
       // Set temporary callback to catch response
-      this.socket.onmessage = (e) => {
-        if (e.data.endsWith('OK\n')) {
+      this.socket.onmessage = async (e) => {
+        const textMsg = await e.data.text()
+        if (textMsg.endsWith('OK\n')) {
           resolve()
         } else {
           reject(new Error('noidle failed'))
@@ -200,17 +217,7 @@ export default class MpdClient {
    */
   async status () {
     const data = await this.send('status\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      if (isNaN(entry[1])) {
-        status[entry[0]] = entry[1]
-      } else {
-        status[entry[0]] = parseInt(entry[1])
-      }
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
@@ -218,17 +225,7 @@ export default class MpdClient {
    */
   async stats () {
     const data = await this.send('stats\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      if (isNaN(entry[1])) {
-        status[entry[0]] = entry[1]
-      } else {
-        status[entry[0]] = parseInt(entry[1])
-      }
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
@@ -293,13 +290,7 @@ export default class MpdClient {
    */
   async replayGainStatus () {
     const data = await this.send('replay_gain_status\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      status[entry[0]] = entry[1]
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
@@ -437,6 +428,30 @@ export default class MpdClient {
    */
   save (name) {
     return this.send(`save "${name}"\n`)
+  }
+
+  /**
+   * Get song picture.
+   * @param {String} uri URI of song.
+   */
+  async readPicture (uri) {
+    let response = await this.send(`readpicture "${uri}" 0\n`)
+    let data = this.responseToObject(response)
+    if (!('binary' in data)) {
+      return null // no picture
+    }
+
+    // Get all binary parts
+    const binaries = [data.binary]
+    let offset = 0
+    while (offset + data.binary.size < data.size) {
+      offset += data.binary.size
+      response = await this.send(`readpicture "${uri}" ${offset}\n`)
+      data = this.responseToObject(response)
+      binaries.push(data.binary)
+    }
+
+    return new Blob(binaries, { type: data.type })
   }
 
   /**
