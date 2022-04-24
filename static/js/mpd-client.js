@@ -1,4 +1,5 @@
 'use strict'
+/* global location, WebSocket */
 
 /**
  * MPD client

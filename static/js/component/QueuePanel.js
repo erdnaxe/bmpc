@@ -1,4 +1,5 @@
 'use strict'
+/* global prompt, HTMLAnchorElement, HTMLDivElement, HTMLLinkElement */
 
 export default class QueuePanel {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, notify, errorHandler) {

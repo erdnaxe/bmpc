@@ -1,4 +1,5 @@
 'use strict'
+/* global Audio */
 
 export default class MediaSession {
   constructor (mpdClient, refreshStatus, refreshCurrentSong, errorHandler) {
