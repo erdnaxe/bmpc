@@ -101,6 +101,9 @@ a svg, button svg {
   vertical-align: middle;
   width: 1em;
 }
+a.link-info[href] {
+  cursor: help;
+}
 button {
   border: none;
   background: transparent;
@@ -176,6 +179,6 @@ input[type="search"], input[type="password"], .dropdown-content,
 .notification, hr {
   border: 1px solid #6B728055;
 }
-a:hover, a.active, button:hover, button.active {
+a:not(.link-info):hover, a.active, button:hover, button.active {
   color: #3B82F6;
 }

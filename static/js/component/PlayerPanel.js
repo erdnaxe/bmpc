@@ -207,7 +207,17 @@ export default class PlayerPanel {
       albumDescription += ` (${year})`
     }
     document.getElementById('album').textContent = albumDescription
+    if (data.MUSICBRAINZ_ALBUMID) {
+      document.getElementById('album').href = `https://musicbrainz.org/release/${data.MUSICBRAINZ_ALBUMID}`
+    } else {
+      document.getElementById('album').removeAttribute('href')
+    }
     document.getElementById('artist').textContent = data.Artist || 'Unknown'
+    if (data.MUSICBRAINZ_ARTISTID) {
+      document.getElementById('artist').href = `https://musicbrainz.org/artist/${data.MUSICBRAINZ_ARTISTID}`
+    } else {
+      document.getElementById('artist').removeAttribute('href')
+    }
 
     // If track is remote, show download button
     const remotePattern = /^https?:\/\//i
