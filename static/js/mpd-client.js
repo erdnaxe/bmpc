@@ -140,21 +140,28 @@ export default class MpdClient {
   }
 
   /**
+   * Build an object representing the response
+   *
+   * Should be only use when there are no duplicated fields in response.
+   */
+  responseToObject (response) {
+    const obj = {}
+    for (const entry of response) {
+      if (isNaN(entry[1])) {
+        obj[entry[0]] = entry[1]
+      } else {
+        obj[entry[0]] = parseInt(entry[1])
+      }
+    }
+    return obj
+  }
+
+  /**
    * Reports the current status of the player and the volume level.
    */
   async currentSong () {
     const data = await this.send('currentsong\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      if (isNaN(entry[1])) {
-        status[entry[0]] = entry[1]
-      } else {
-        status[entry[0]] = parseInt(entry[1])
-      }
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
@@ -210,17 +217,7 @@ export default class MpdClient {
    */
   async status () {
     const data = await this.send('status\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      if (isNaN(entry[1])) {
-        status[entry[0]] = entry[1]
-      } else {
-        status[entry[0]] = parseInt(entry[1])
-      }
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
@@ -228,17 +225,7 @@ export default class MpdClient {
    */
   async stats () {
     const data = await this.send('stats\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      if (isNaN(entry[1])) {
-        status[entry[0]] = entry[1]
-      } else {
-        status[entry[0]] = parseInt(entry[1])
-      }
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
@@ -303,13 +290,7 @@ export default class MpdClient {
    */
   async replayGainStatus () {
     const data = await this.send('replay_gain_status\n')
-
-    // Parse status
-    const status = {}
-    for (const entry of data) {
-      status[entry[0]] = entry[1]
-    }
-    return status
+    return this.responseToObject(data)
   }
 
   /**
