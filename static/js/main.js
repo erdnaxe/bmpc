@@ -68,6 +68,16 @@ async function refreshCurrentSong () {
     `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'}`
   currentlyPlayingId = `${data.Id}`
   window.location.hash = `#${data.Id}`
+
+  // Update cover art
+  const picture = await mpdClient.readPicture(data.file)
+  const coverArtImg = document.getElementById('cover-art')
+  coverArtImg.classList.toggle('hide', picture === null)
+  if (picture !== null) {
+    const imageURL = URL.createObjectURL(picture)
+    URL.revokeObjectURL(coverArtImg.src)
+    coverArtImg.src = imageURL
+  }
 }
 
 async function refreshStatus () {
