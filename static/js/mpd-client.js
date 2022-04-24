@@ -1,5 +1,5 @@
 'use strict'
-/* global location, WebSocket */
+/* global Blob, location, WebSocket */
 
 /**
  * MPD client
@@ -428,6 +428,30 @@ export default class MpdClient {
    */
   save (name) {
     return this.send(`save "${name}"\n`)
+  }
+
+  /**
+   * Get song picture.
+   * @param {String} uri URI of song.
+   */
+  async readPicture (uri) {
+    let response = await this.send(`readpicture "${uri}" 0\n`)
+    let data = this.responseToObject(response)
+    if (!('binary' in data)) {
+      return null // no picture
+    }
+
+    // Get all binary parts
+    const binaries = [data.binary]
+    let offset = 0
+    while (offset + data.binary.size < data.size) {
+      offset += data.binary.size
+      response = await this.send(`readpicture "${uri}" ${offset}\n`)
+      data = this.responseToObject(response)
+      binaries.push(data.binary)
+    }
+
+    return new Blob(binaries, { type: data.type })
   }
 
   /**
