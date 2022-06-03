@@ -46,7 +46,6 @@ footer {
 input[type="range"] {
   display: block;
   width: 100%;
-  appearance: none;
   background: #6B7280;
   height: 0.5em;
   margin: 4px 0;
