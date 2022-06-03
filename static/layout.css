@@ -167,6 +167,9 @@ a, button {
   color: #111827;
 }
 @media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
   body, .dropdown-content {
     background: #14181f;
     color: #e5e7eb;
