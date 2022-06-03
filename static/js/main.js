@@ -70,13 +70,17 @@ async function refreshCurrentSong () {
   window.location.hash = `#${data.Id}`
 
   // Update cover art
-  const picture = await mpdClient.readPicture(data.file)
   const coverArtImg = document.getElementById('cover-art')
-  coverArtImg.classList.toggle('hide', picture === null)
-  if (picture !== null) {
-    const imageURL = URL.createObjectURL(picture)
-    URL.revokeObjectURL(coverArtImg.src)
-    coverArtImg.src = imageURL
+  if (data.file) {
+    const picture = await mpdClient.readPicture(data.file)
+    coverArtImg.classList.toggle('hide', picture === null)
+    if (picture !== null) {
+      const imageURL = URL.createObjectURL(picture)
+      URL.revokeObjectURL(coverArtImg.src)
+      coverArtImg.src = imageURL
+    }
+  } else {
+    coverArtImg.classList.add('hide')
   }
 }
 
