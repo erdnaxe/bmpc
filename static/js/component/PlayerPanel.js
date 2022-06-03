@@ -15,44 +15,37 @@ export default class PlayerPanel {
     })
     document.getElementById('btn-set-prev').addEventListener('click', (e) => {
       mpdClient.previous().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-      e.preventDefault()
     })
     document.getElementById('btn-set-play').addEventListener('click', (e) => {
       mpdClient.pause(0).then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
     })
     document.getElementById('btn-set-pause').addEventListener('click', (e) => {
       mpdClient.pause(1).then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
     })
     document.getElementById('btn-set-next').addEventListener('click', (e) => {
       mpdClient.next().then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
-      e.preventDefault()
     })
     document.getElementById('btn-toggle-random').addEventListener('click', (e) => {
       const active = e.target.classList.contains('active')
       mpdClient.setRandom(!active).then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
     })
     document.getElementById('btn-toggle-repeat').addEventListener('click', (e) => {
       const active = e.target.classList.contains('active')
-      mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
+      if (active) {
+        mpdClient.setSingle(true).then(refreshStatus).catch(errorHandler)
+      } else {
+        mpdClient.setRepeat(true).then(refreshStatus).catch(errorHandler)
+      }
+    })
+    document.getElementById('btn-toggle-repeat-single').addEventListener('click', (e) => {
+      mpdClient.setSingle(false).then(() => mpdClient.setRepeat(false)).then(() => mpdClient.setConsume(true)).then(refreshStatus).catch(errorHandler)
     })
     document.getElementById('btn-toggle-consume').addEventListener('click', (e) => {
-      const active = e.target.classList.contains('active')
-      mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
-    })
-    document.getElementById('btn-toggle-single').addEventListener('click', (e) => {
-      const active = e.target.classList.contains('active')
-      mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
+      mpdClient.setConsume(false).then(refreshStatus).catch(errorHandler)
     })
     document.getElementById('btn-toggle-crossfade').addEventListener('click', (e) => {
       const state = e.target.classList.contains('active')
       mpdClient.setCrossfade(state ? 0 : 3).then(refreshStatus).catch(errorHandler)
-      e.preventDefault()
     })
     document.getElementById('volume-slider').addEventListener('input', (e) => {
       mpdClient.setVolume(e.target.value).then(refreshStatus).catch(errorHandler)
@@ -148,17 +141,18 @@ export default class PlayerPanel {
             return
           case 'r':
             active = document.getElementById('btn-toggle-repeat').classList.contains('active')
-            mpdClient.setRepeat(!active).then(refreshStatus).catch(errorHandler)
-            e.preventDefault()
-            return
-          case 'R':
-            active = document.getElementById('btn-toggle-consume').classList.contains('active')
-            mpdClient.setConsume(!active).then(refreshStatus).catch(errorHandler)
+            active &= document.getElementById('btn-toggle-repeat-single').classList.contains('hide')
+            mpdClient.setSingle(false).then(() => mpdClient.setConsume(false)).then(() => mpdClient.setRepeat(!active)).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'y':
-            active = document.getElementById('btn-toggle-single').classList.contains('active')
-            mpdClient.setSingle(!active).then(refreshStatus).catch(errorHandler)
+            active = !document.getElementById('btn-toggle-repeat-single').classList.contains('hide')
+            mpdClient.setConsume(false).then(() => mpdClient.setRepeat(!active)).then(() => mpdClient.setSingle(!active)).then(refreshStatus).catch(errorHandler)
+            e.preventDefault()
+            return
+          case 'R':
+            active = !document.getElementById('btn-toggle-consume').classList.contains('hide')
+            mpdClient.setSingle(false).then(() => mpdClient.setRepeat(false)).then(() => mpdClient.setConsume(!active)).then(refreshStatus).catch(errorHandler)
             e.preventDefault()
             return
           case 'x':
@@ -259,8 +253,9 @@ export default class PlayerPanel {
     // Update playback settings
     document.getElementById('btn-toggle-random').classList.toggle('active', data.random)
     document.getElementById('btn-toggle-repeat').classList.toggle('active', data.repeat)
-    document.getElementById('btn-toggle-consume').classList.toggle('active', data.consume)
-    document.getElementById('btn-toggle-single').classList.toggle('active', data.single)
+    document.getElementById('btn-toggle-repeat').classList.toggle('hide', data.consume || data.single)
+    document.getElementById('btn-toggle-repeat-single').classList.toggle('hide', data.consume || !data.single)
+    document.getElementById('btn-toggle-consume').classList.toggle('hide', !data.consume)
     document.getElementById('btn-toggle-crossfade').classList.toggle('active', data.xfade > 0)
 
     // Update replay gain mode
