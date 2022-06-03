@@ -198,10 +198,10 @@ export default class PlayerPanel {
     }
 
     // Update text elements
-    document.getElementById('title').textContent = data.Title || data.Name || data.file
+    document.getElementById('title').textContent = data.Title ?? data.Name ?? data.file
     document.getElementById('title').title = data.file
     document.getElementById('track-disk').textContent = trackDisk
-    let albumDescription = data.Album || 'Unknown'
+    let albumDescription = data.Album ?? 'Unknown'
     if (data.Date) {
       const year = new Date(data.Date).getFullYear()
       albumDescription += ` (${year})`
@@ -237,13 +237,9 @@ export default class PlayerPanel {
     document.getElementById('btn-set-pause').classList.toggle('hide', data.state !== 'play')
 
     // Update progress bar
-    if (data.elapsed !== undefined && data.duration !== undefined) {
-      document.getElementById('progress-bar').max = data.duration
-      document.getElementById('progress-bar').value = data.elapsed
-      this.songLength = data.duration
-    } else {
-      document.getElementById('progress-bar').value = 0
-    }
+    document.getElementById('progress-bar').max = data.duration ?? 100
+    document.getElementById('progress-bar').value = data.elapsed ?? 0
+    this.songLength = data.duration ?? 100
 
     // Update progress counter
     let elapsed = '-'
@@ -258,7 +254,7 @@ export default class PlayerPanel {
 
     // Update volume slider
     document.getElementById('btn-volume').classList.toggle('hide', data.volume === undefined)
-    document.getElementById('volume-slider').value = data.volume === undefined ? 100 : data.volume
+    document.getElementById('volume-slider').value = data.volume ?? 100
 
     // Update playback settings
     document.getElementById('btn-toggle-random').classList.toggle('active', data.random)

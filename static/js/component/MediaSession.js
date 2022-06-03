@@ -55,9 +55,9 @@ export default class MediaSession {
   updateCurrentSong (data) {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
-        title: data.Title || data.Name || data.file,
-        artist: data.Artist || '',
-        album: data.Album || ''
+        title: data.Title ?? data.Name ?? data.file,
+        artist: data.Artist ?? '',
+        album: data.Album ?? ''
       })
     }
   }

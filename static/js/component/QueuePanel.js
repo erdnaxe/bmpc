@@ -102,7 +102,7 @@ export default class QueuePanel {
    */
   updateStatus (data) {
     // Style active song in bold in playlist
-    const trackPos = data.song !== undefined ? data.song.toString() : '-1'
+    const trackPos = data.song?.toString() ?? '-1'
     this.queueElement.dataset.activeSong = trackPos
     this.queueElement.childNodes.forEach((el) => {
       if (el instanceof HTMLAnchorElement) {
