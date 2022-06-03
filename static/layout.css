@@ -39,6 +39,7 @@ footer {
 /* Player format */
 .title {
   font-size: 2em;
+  line-height: 1;
 }
 .subtitle {
   font-size: 1.2em;
@@ -67,6 +68,7 @@ input[type="search"], input[type="password"] {
   text-decoration: none;
   background: #6b72800d;
   color: inherit;
+  line-height: 1.2;
 }
 .queue-item:hover, .queue-item:focus {
   background: #6b72804d;
@@ -98,8 +100,7 @@ a.active, button.active {
   font-weight: bold;
 }
 a svg, button svg {
-  vertical-align: middle;
-  width: 1em;
+  vertical-align: -0.125em;
 }
 a.link-info[href] {
   cursor: help;
