@@ -191,7 +191,7 @@ export default class QueuePanel {
 
       // Column: duration
       const durationEl = document.createElement('div')
-      durationEl.textContent = song.Time ? new Date(song.Time * 1000).toISOString().substring(14, 5) : '-'
+      durationEl.textContent = song.Time ? new Date(song.Time * 1000).toISOString().substring(14, 19) : '-'
       item.appendChild(durationEl)
 
       // Last column: remove element
