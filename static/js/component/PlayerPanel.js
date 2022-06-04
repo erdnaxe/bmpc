@@ -239,10 +239,10 @@ export default class PlayerPanel {
     let elapsed = '-'
     let duration = '-'
     if (data.elapsed !== undefined) {
-      elapsed = new Date(data.elapsed * 1000).toISOString().substr(14, 5)
+      elapsed = new Date(data.elapsed * 1000).toISOString().substring(14, 5)
     }
     if (data.duration !== undefined) {
-      duration = new Date(data.duration * 1000).toISOString().substr(14, 5)
+      duration = new Date(data.duration * 1000).toISOString().substring(14, 5)
     }
     document.getElementById('counter').textContent = `${elapsed} / ${duration}`
 

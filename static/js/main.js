@@ -108,7 +108,7 @@ function periodicRefresh () {
 
 // When URL changes, change song
 window.addEventListener('hashchange', () => {
-  const songId = window.location.hash.substr(1)
+  const songId = window.location.hash.substring(1)
   if (!isNaN(songId) && currentlyPlayingId !== songId) {
     mpdClient.playId(songId).then(refreshStatus).then(refreshCurrentSong).catch(errorHandler)
   }
