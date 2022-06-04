@@ -177,8 +177,9 @@ export default class PlayerPanel {
   /**
    * Update element to reflect new current song
    * @param {Object} data Current song returned by MPD
+   * @param {Blob, null} picture Current song cover art
    */
-  updateCurrentSong (data) {
+  updateCurrentSong (data, picture) {
     if (document.getElementById('title').title === data.file) {
       return // Already up to date
     }
@@ -218,6 +219,15 @@ export default class PlayerPanel {
     const btnDownload = document.getElementById('btn-download')
     btnDownload.classList.toggle('hide', !remotePattern.test(data.file))
     btnDownload.href = data.file
+
+    // Update cover art
+    const coverArtImg = document.getElementById('cover-art')
+    coverArtImg.classList.toggle('hide', picture === null)
+    if (picture !== null) {
+      const imageURL = URL.createObjectURL(picture)
+      URL.revokeObjectURL(coverArtImg.src)
+      coverArtImg.src = imageURL
+    }
   }
 
   /**

@@ -60,26 +60,13 @@ function errorHandler (err) {
 
 async function refreshCurrentSong () {
   const data = await mpdClient.currentSong().catch(errorHandler)
-  playerPanel.updateCurrentSong(data)
+  const picture = data.file ? await mpdClient.readPicture(data.file) : null
+  playerPanel.updateCurrentSong(data, picture)
   mediaSession.updateCurrentSong(data)
   document.title = `${data.Title || data.Name || data.file} — ` +
     `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'}`
   currentlyPlayingId = `${data.Id}`
   window.location.hash = `#${data.Id}`
-
-  // Update cover art
-  const coverArtImg = document.getElementById('cover-art')
-  if (data.file) {
-    const picture = await mpdClient.readPicture(data.file)
-    coverArtImg.classList.toggle('hide', picture === null)
-    if (picture !== null) {
-      const imageURL = URL.createObjectURL(picture)
-      URL.revokeObjectURL(coverArtImg.src)
-      coverArtImg.src = imageURL
-    }
-  } else {
-    coverArtImg.classList.add('hide')
-  }
 }
 
 async function refreshStatus () {
