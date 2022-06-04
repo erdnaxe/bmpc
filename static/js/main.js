@@ -1,6 +1,5 @@
 'use strict'
 
-import Favicon from './component/Favicon.js'
 import MediaSession from './component/MediaSession.js'
 import MpdClient from './mpd-client.js'
 import PlayerPanel from './component/PlayerPanel.js'
@@ -8,7 +7,6 @@ import QueuePanel from './component/QueuePanel.js'
 
 // Init client and components
 const mpdClient = new MpdClient()
-const favicon = new Favicon()
 const playerPanel = new PlayerPanel(mpdClient, refreshStatus, refreshCurrentSong, refreshOutput, errorHandler)
 const queuePanel = new QueuePanel(mpdClient, refreshStatus, refreshCurrentSong, notify, errorHandler)
 const mediaSession = new MediaSession(mpdClient, refreshStatus, refreshCurrentSong, errorHandler)
@@ -90,13 +88,6 @@ async function refreshStatus () {
   playerPanel.updateStatus(data, replayGainData)
   mediaSession.updateStatus(data)
   queuePanel.updateStatus(data)
-
-  // Update favicon
-  if (data.state === 'play') {
-    favicon.updateIcon('▶️')
-  } else {
-    favicon.updateIcon('⏸️')
-  }
 }
 
 async function refreshOutput () {
