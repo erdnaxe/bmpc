@@ -1,15 +1,15 @@
 # bmpc
 
+<img src="static/favicon.svg" align="right" width="64px"/>
+
 bmpc is a web-based MPD client focused on simplicity and ease of use.
-It is intended as a proof-of-concept showing a direct interaction with MPD using
-WebSocket.
+It is also intended as a proof-of-concept of a WebSocket MPD client
+(https://github.com/MusicPlayerDaemon/MPD/issues/1511).
 
 Some features:
 
--   Only require a [Music Player Daemon](https://en.wikipedia.org/wiki/Music_Player_Daemon)
-    or [Mopidy](https://mopidy.com/) server.
 -   Simple installation thanks to Golang.
--   Free and open source: bmpc is under the MIT license.
+-   Free and open source: this project is under the MIT license.
 -   Hackable: no NodeJS tool required to build, use modern
     [ECMAScript 2017](https://en.wikipedia.org/wiki/ECMAScript#8th_Edition_%E2%80%93_ECMAScript_2017)
     code for readability.
