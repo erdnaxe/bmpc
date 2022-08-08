@@ -60,9 +60,9 @@ export default class QueuePanel {
     document.getElementById('page-indicator').addEventListener('wheel', (e) => {
       if (e.deltaY !== 0) {
         e.preventDefault()
-        if (e.deltaY < 0 && this.queuePage < this.queueMaxPage) {
+        if (e.deltaY > 0 && this.queuePage < this.queueMaxPage) {
           this.queuePage += 1
-        } else if (e.deltaY > 0 && this.queuePage > 0) {
+        } else if (e.deltaY < 0 && this.queuePage > 0) {
           this.queuePage -= 1
         }
         this.refreshQueue()
