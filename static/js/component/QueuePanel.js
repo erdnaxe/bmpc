@@ -224,8 +224,8 @@ export default class QueuePanel {
     }
 
     // Show pagination
-    document.getElementById('btn-previous-page').classList.toggle('hide', this.queuePage <= 0)
+    document.getElementById('btn-previous-page').disabled = this.queuePage <= 0
     document.getElementById('page-indicator').textContent = `${this.queuePage + 1} / ${this.queueMaxPage + 1}`
-    document.getElementById('btn-next-page').classList.toggle('hide', data.length < this.songsPerPage)
+    document.getElementById('btn-next-page').disabled = data.length < this.songsPerPage
   }
 }
