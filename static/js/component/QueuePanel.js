@@ -172,7 +172,8 @@ export default class QueuePanel {
       const artistEl = document.createElement('div')
       let albumDescription = `${song.Album || ''}`
       if (song.Date) {
-        const year = new Date(song.Date).getFullYear()
+        const unixTime = Date.parse(song.Date)
+        const year = new Date(unixTime).getFullYear()
         albumDescription += ` (${year})`
       }
       artistEl.innerHTML = `${song.Artist || ''}<i>${albumDescription}</i>`

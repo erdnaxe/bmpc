@@ -198,7 +198,8 @@ export default class PlayerPanel {
     document.getElementById('track-disk').textContent = trackDisk
     let albumDescription = data.Album ?? 'Unknown'
     if (data.Date) {
-      const year = new Date(data.Date).getFullYear()
+      const unixTime = Date.parse(data.Date)
+      const year = new Date(unixTime).getFullYear()
       albumDescription += ` (${year})`
     }
     document.getElementById('album').textContent = albumDescription
