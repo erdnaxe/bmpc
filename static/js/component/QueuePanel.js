@@ -9,6 +9,8 @@ export default class QueuePanel {
 
     // Pagination
     this.queuePage = 0
+    this.queueMaxPage = 0
+    this.activeSongPos = -1
     this.songsPerPage = 25
 
     // Define event callbacks
@@ -55,6 +57,17 @@ export default class QueuePanel {
       this.refreshQueue()
       e.preventDefault()
     })
+    document.getElementById('page-indicator').addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault()
+        if (e.deltaY < 0 && this.queuePage < this.queueMaxPage) {
+          this.queuePage += 1
+        } else if (e.deltaY > 0 && this.queuePage > 0) {
+          this.queuePage -= 1
+        }
+        this.refreshQueue()
+      }
+    })
     document.addEventListener('keydown', (e) => {
       if (e.target.tagName !== 'INPUT') {
         switch (e.key) {
@@ -85,7 +98,7 @@ export default class QueuePanel {
             }
             break
           case 'ArrowRight':
-            if (this.queueElement.childElementCount >= this.songsPerPage) {
+            if (this.queuePage < this.queueMaxPage) {
               this.queuePage++
               this.refreshQueue()
               e.preventDefault()
@@ -103,7 +116,8 @@ export default class QueuePanel {
   updateStatus (data) {
     // Style active song in bold in playlist
     const trackPos = data.song?.toString() ?? '-1'
-    this.queueElement.dataset.activeSong = trackPos
+    this.activeSongPos = trackPos
+    this.queueMaxPage = Math.ceil(data.playlistlength / this.songsPerPage) - 1
     this.queueElement.childNodes.forEach((el) => {
       if (el instanceof HTMLAnchorElement) {
         el.classList.toggle('active', el.dataset.trackPos === trackPos)
@@ -119,7 +133,7 @@ export default class QueuePanel {
    */
   async jumpToPlayingPage () {
     // Go to current page
-    const playingPage = Math.floor(this.queueElement.dataset.activeSong / this.songsPerPage)
+    const playingPage = Math.floor(this.activeSongPos / this.songsPerPage)
     if (playingPage >= 0) {
       this.queuePage = playingPage
       await this.refreshQueue()
@@ -201,7 +215,7 @@ export default class QueuePanel {
       durationEl.appendChild(removeEl)
 
       this.queueElement.appendChild(item)
-      if (song.Pos === this.queueElement.dataset.activeSong) {
+      if (song.Pos === this.activeSongPos) {
         item.classList.add('active') // Style current song
       }
 
@@ -211,6 +225,7 @@ export default class QueuePanel {
 
     // Show pagination
     document.getElementById('btn-previous-page').classList.toggle('hide', this.queuePage <= 0)
+    document.getElementById('page-indicator').textContent = `${this.queuePage + 1} / ${this.queueMaxPage + 1}`
     document.getElementById('btn-next-page').classList.toggle('hide', data.length < this.songsPerPage)
   }
 }
