@@ -126,6 +126,9 @@ export default class QueuePanel {
 
     // Keep update database button active until update ends
     document.getElementById('btn-update-database').classList.toggle('active', data.updating_db || 0)
+
+    // Make sure page count is updated
+    document.getElementById('page-indicator').textContent = `${this.queuePage + 1} / ${this.queueMaxPage + 1}`
   }
 
   /**
@@ -133,8 +136,8 @@ export default class QueuePanel {
    */
   async jumpToPlayingPage () {
     // Go to current page
-    const playingPage = Math.floor(this.activeSongPos / this.songsPerPage)
-    if (playingPage >= 0) {
+    const playingPage = Math.max(Math.floor(this.activeSongPos / this.songsPerPage), 0)
+    if (this.queueMaxPage >= 0) {
       this.queuePage = playingPage
       await this.refreshQueue()
     }

@@ -65,8 +65,10 @@ async function refreshCurrentSong () {
   mediaSession.updateCurrentSong(data)
   document.title = `${data.Title || data.Name || data.file} — ` +
     `${data.Album || 'Unknown'} — ${data.Artist || 'Unknown'}`
-  currentlyPlayingId = `${data.Id}`
-  window.location.hash = `#${data.Id}`
+  if (data.Id) {
+    currentlyPlayingId = `${data.Id}`
+    window.location.hash = `#${data.Id}`
+  }
 }
 
 async function refreshStatus () {
