@@ -63,7 +63,7 @@ input[type="search"], input[type="password"] {
 /* Queue format */
 .queue-item, .queue-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 6em;
+  grid-template-columns: 1fr 1fr 1fr 6em;
   border-top: 1px solid #8080804d;
   text-decoration: none;
   background: #8080800d;
@@ -160,6 +160,14 @@ button:disabled {
 }
 .flex {
   display: flex;
+}
+@media (max-width: 480px) {
+  .hide-sm {
+    display: none !important;
+  }
+  .queue-item, .queue-header {
+    grid-template-columns: 1fr 1fr 6em;
+  }
 }
 
 /* Colors */

@@ -180,38 +180,45 @@ export default class QueuePanel {
       item.classList.add('queue-item')
       item.href = `#${song.Id}`
       item.dataset.trackPos = song.Pos
-      item.title = song.file
 
-      // Column: artist, album
+      // Column: track name
+      const trackEl = document.createElement('div')
+      trackEl.innerHTML = `${song.Title || song.Name || song.file}`
+      trackEl.title = `${song.Title || song.Name || song.file}`
+      item.appendChild(trackEl)
+
+      // Column: artist
       const artistEl = document.createElement('div')
-      let albumDescription = `${song.Album || ''}`
-      if (song.Date) {
-        const unixTime = Date.parse(song.Date)
-        const year = new Date(unixTime).getFullYear()
-        albumDescription += ` (${year})`
-      }
-      artistEl.innerHTML = `${song.Artist || ''}<i>${albumDescription}</i>`
+      artistEl.innerHTML = `${song.Artist || ''}`
+      artistEl.title = `${song.Artist || ''}`
       item.appendChild(artistEl)
 
-      // Column: track
-      const trackEl = document.createElement('div')
-      let trackDescription = ''
-      if (song.Disc && song.Track) {
-        trackDescription = `Disc ${song.Disc}, track ${song.Track}`
-      } else if (song.Track) {
-        trackDescription = `Track ${song.Track}`
+      // Column: album
+      const albumEl = document.createElement('div')
+      albumEl.classList.add('hide-sm')
+      let albumDescription = `${song.Album || ''}`
+      if (albumDescription && song.Date) {
+        const unixTime = Date.parse(song.Date)
+        const year = new Date(unixTime).getFullYear()
+        albumDescription += `, ${year}`
       }
-      trackEl.innerHTML = `${song.Title || song.Name || song.file}<i>${trackDescription}</i>`
-      item.appendChild(trackEl)
+      if (albumDescription && song.Disc && song.Track) {
+        albumDescription += `, disc ${song.Disc}, track ${song.Track}`
+      } else if (song.Track) {
+        albumDescription += `, track ${song.Track}`
+      }
+      albumEl.innerHTML = albumDescription
+      albumEl.title = albumDescription
+      item.appendChild(albumEl)
 
       // Column: duration
       const durationEl = document.createElement('div')
       durationEl.textContent = song.Time ? new Date(song.Time * 1000).toISOString().substring(14, 19) : '-'
       item.appendChild(durationEl)
 
-      // Last column: remove element
-      const removeEl = document.createElement('div')
-      removeEl.innerHTML = '✕'
+      // Add remove track button
+      const removeEl = document.createElement('span')
+      removeEl.innerHTML = ' ✕'
       durationEl.appendChild(removeEl)
 
       this.queueElement.appendChild(item)
