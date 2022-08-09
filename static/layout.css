@@ -63,7 +63,7 @@ input[type="search"], input[type="password"] {
 /* Queue format */
 .queue-item, .queue-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 6em;
+  grid-template-columns: 1fr 1fr 1fr 6em;
   border-top: 1px solid #8080804d;
   text-decoration: none;
   background: #8080800d;
@@ -110,7 +110,11 @@ button {
   cursor: pointer;
   font-size: 1em;
 }
-.btn-group a, .btn-group button {
+button:disabled {
+  cursor: default;
+  color: #6b728055;
+}
+.btn-group a, .btn-group button, .btn-group span {
   padding: 5px;
   display: inline-block;
 }
@@ -157,6 +161,14 @@ button {
 .flex {
   display: flex;
 }
+@media (max-width: 480px) {
+  .hide-sm {
+    display: none !important;
+  }
+  .queue-item, .queue-header {
+    grid-template-columns: 1fr 1fr 6em;
+  }
+}
 
 /* Colors */
 body, .dropdown-content {
@@ -182,6 +194,6 @@ input[type="search"], input[type="password"], .dropdown-content,
 .notification, hr {
   border: 1px solid #6b728055;
 }
-a:not(.link-info):hover, a.active, button:hover, button.active {
+a:not(.link-info):hover, a.active, button:not(:disabled):hover, button.active {
   color: #6699ff;
 }

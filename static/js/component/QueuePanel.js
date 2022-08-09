@@ -9,6 +9,8 @@ export default class QueuePanel {
 
     // Pagination
     this.queuePage = 0
+    this.queueMaxPage = 0
+    this.activeSongPos = -1
     this.songsPerPage = 25
 
     // Define event callbacks
@@ -55,6 +57,17 @@ export default class QueuePanel {
       this.refreshQueue()
       e.preventDefault()
     })
+    document.getElementById('page-indicator').addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault()
+        if (e.deltaY > 0 && this.queuePage < this.queueMaxPage) {
+          this.queuePage += 1
+        } else if (e.deltaY < 0 && this.queuePage > 0) {
+          this.queuePage -= 1
+        }
+        this.refreshQueue()
+      }
+    })
     document.addEventListener('keydown', (e) => {
       if (e.target.tagName !== 'INPUT') {
         switch (e.key) {
@@ -85,7 +98,7 @@ export default class QueuePanel {
             }
             break
           case 'ArrowRight':
-            if (this.queueElement.childElementCount >= this.songsPerPage) {
+            if (this.queuePage < this.queueMaxPage) {
               this.queuePage++
               this.refreshQueue()
               e.preventDefault()
@@ -103,7 +116,8 @@ export default class QueuePanel {
   updateStatus (data) {
     // Style active song in bold in playlist
     const trackPos = data.song?.toString() ?? '-1'
-    this.queueElement.dataset.activeSong = trackPos
+    this.activeSongPos = trackPos
+    this.queueMaxPage = Math.ceil(data.playlistlength / this.songsPerPage) - 1
     this.queueElement.childNodes.forEach((el) => {
       if (el instanceof HTMLAnchorElement) {
         el.classList.toggle('active', el.dataset.trackPos === trackPos)
@@ -112,6 +126,9 @@ export default class QueuePanel {
 
     // Keep update database button active until update ends
     document.getElementById('btn-update-database').classList.toggle('active', data.updating_db || 0)
+
+    // Make sure page count is updated
+    document.getElementById('page-indicator').textContent = `${this.queuePage + 1} / ${this.queueMaxPage + 1}`
   }
 
   /**
@@ -119,8 +136,8 @@ export default class QueuePanel {
    */
   async jumpToPlayingPage () {
     // Go to current page
-    const playingPage = Math.floor(this.queueElement.dataset.activeSong / this.songsPerPage)
-    if (playingPage >= 0) {
+    const playingPage = Math.max(Math.floor(this.activeSongPos / this.songsPerPage), 0)
+    if (this.queueMaxPage >= 0) {
       this.queuePage = playingPage
       await this.refreshQueue()
     }
@@ -166,42 +183,49 @@ export default class QueuePanel {
       item.classList.add('queue-item')
       item.href = `#${song.Id}`
       item.dataset.trackPos = song.Pos
-      item.title = song.file
 
-      // Column: artist, album
+      // Column: track name
+      const trackEl = document.createElement('div')
+      trackEl.innerHTML = `${song.Title || song.Name || song.file}`
+      trackEl.title = `${song.Title || song.Name || song.file}`
+      item.appendChild(trackEl)
+
+      // Column: artist
       const artistEl = document.createElement('div')
-      let albumDescription = `${song.Album || ''}`
-      if (song.Date) {
-        const unixTime = Date.parse(song.Date)
-        const year = new Date(unixTime).getFullYear()
-        albumDescription += ` (${year})`
-      }
-      artistEl.innerHTML = `${song.Artist || ''}<i>${albumDescription}</i>`
+      artistEl.innerHTML = `${song.Artist || ''}`
+      artistEl.title = `${song.Artist || ''}`
       item.appendChild(artistEl)
 
-      // Column: track
-      const trackEl = document.createElement('div')
-      let trackDescription = ''
-      if (song.Disc && song.Track) {
-        trackDescription = `Disc ${song.Disc}, track ${song.Track}`
-      } else if (song.Track) {
-        trackDescription = `Track ${song.Track}`
+      // Column: album
+      const albumEl = document.createElement('div')
+      albumEl.classList.add('hide-sm')
+      let albumDescription = `${song.Album || ''}`
+      if (albumDescription && song.Date) {
+        const unixTime = Date.parse(song.Date)
+        const year = new Date(unixTime).getFullYear()
+        albumDescription += `, ${year}`
       }
-      trackEl.innerHTML = `${song.Title || song.Name || song.file}<i>${trackDescription}</i>`
-      item.appendChild(trackEl)
+      if (albumDescription && song.Disc && song.Track) {
+        albumDescription += `, disc ${song.Disc}, track ${song.Track}`
+      } else if (song.Track) {
+        albumDescription += `, track ${song.Track}`
+      }
+      albumEl.innerHTML = albumDescription
+      albumEl.title = albumDescription
+      item.appendChild(albumEl)
 
       // Column: duration
       const durationEl = document.createElement('div')
       durationEl.textContent = song.Time ? new Date(song.Time * 1000).toISOString().substring(14, 19) : '-'
       item.appendChild(durationEl)
 
-      // Last column: remove element
-      const removeEl = document.createElement('div')
-      removeEl.innerHTML = '✕'
+      // Add remove track button
+      const removeEl = document.createElement('span')
+      removeEl.innerHTML = ' ✕'
       durationEl.appendChild(removeEl)
 
       this.queueElement.appendChild(item)
-      if (song.Pos === this.queueElement.dataset.activeSong) {
+      if (song.Pos === this.activeSongPos) {
         item.classList.add('active') // Style current song
       }
 
@@ -210,7 +234,8 @@ export default class QueuePanel {
     }
 
     // Show pagination
-    document.getElementById('btn-previous-page').classList.toggle('hide', this.queuePage <= 0)
-    document.getElementById('btn-next-page').classList.toggle('hide', data.length < this.songsPerPage)
+    document.getElementById('btn-previous-page').disabled = this.queuePage <= 0
+    document.getElementById('page-indicator').textContent = `${this.queuePage + 1} / ${this.queueMaxPage + 1}`
+    document.getElementById('btn-next-page').disabled = data.length < this.songsPerPage
   }
 }
