@@ -24,11 +24,11 @@ bmpc needs to be installed on a machine that can access MPD socket.
 
 ### Using Golang
 
-You can use `go get` to download and compile bmpc.
-You might need to add the `go/bin` folder to your `$PATH` afterward.
+You can use `go install` to download and compile bmpc directly.
+The output binary is usually in `~/go/bin/bmpc`.
 
 ```bash
-go get github.com/erdnaxe/bmpc
+go install github.com/erdnaxe/bmpc@latest
 ```
 
 ## How to contribute
