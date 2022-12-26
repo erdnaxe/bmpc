@@ -13,8 +13,6 @@ Some features:
 -   Hackable: no NodeJS tool required to build, use modern
     [ECMAScript 2017](https://en.wikipedia.org/wiki/ECMAScript#8th_Edition_%E2%80%93_ECMAScript_2017)
     code for readability.
--   Media control support: integrate with MPRIS using Firefox on Linux,
-    should also work on other platforms.
 
 ## Installation
 
